@@ -2,12 +2,9 @@ import streamlit as st
 import gensim.corpora as corpora
 from gensim.models.coherencemodel import CoherenceModel
 from gensim.models.ldamodel import LdaModel
-
 import pyLDAvis
 import pyLDAvis.gensim
-
 import pandas as pd
-
 import extra_streamlit_components as stx
 import nltk
 from nltk.tokenize import word_tokenize
@@ -16,13 +13,10 @@ from nltk.corpus import stopwords
 nltk.download('stopwords')
 nltk.download('punkt')
 
-st.set_page_config(
-    page_title="Topic Modelling", 
-    page_icon="📊",
-    layout='wide', 
-)
-
 def add_logo():
+    """
+    Adds a logo to the Streamlit sidebar.
+    """
     st.markdown(
         """
         <style>
@@ -38,14 +32,6 @@ def add_logo():
         unsafe_allow_html=True,
     )
 add_logo()
-
-# def download_nltk_packages():
-#     nltk_packages = ['stopwords', 'punkt']
-#     for package in nltk_packages:
-#         try:
-#             nltk.data.find(f'tokenizers/{package}')
-#         except LookupError:
-#             nltk.download(package)
 
 def preprocess_text(text_ls):
     preprocess_text = []
@@ -88,19 +74,23 @@ if "tab_id_topic" not in st.session_state:
 
 st.session_state['tab_id_topic'] = stx.tab_bar(data=[stx.TabBarItemData(id=st.session_state['_input_queries'][i]['supplier'], title=st.session_state['_input_queries'][i]['supplier']+' '+st.session_state['_input_queries'][i]['focus'], description=f"Display {st.session_state['_input_queries'][i]['num']} scrapped News") for i in range(len(st.session_state['_input_queries']))] , default=st.session_state['_input_queries'][0]['supplier'])
 
-# Display the search results in the tabs, look up the index of the supplier in the DataFrame
+# Creating visualization for the LDA model, refactored from https://neptune.ai/blog/pyldavis-topic-modelling-exploration-tool-that-every-nlp-data-scientist-should-know
 if st.session_state['tab_id_topic'] is not None:
     df_all_results = pd.DataFrame(st.session_state['all_results'])      # Convert the list of dictionaries to a DataFrame
     start_index = df_all_results.loc[df_all_results['supplier'] == st.session_state['tab_id_topic']].index[0]
     end_index = df_all_results.loc[df_all_results['supplier'] == st.session_state['tab_id_topic']].index[-1] + 1
- 
+    
     text_corpus = []
+    # Extract the scrapped text from the DataFrame
     for i in range(start_index,end_index):
         text_corpus.append(df_all_results.iloc[i]['scrapped_text'])
+    # Preprocess the text
     text_corpus_clean = preprocess_text(text_corpus)
     dictionary = corpora.Dictionary(text_corpus_clean)
     corpus = [dictionary.doc2bow(text) for text in text_corpus_clean]
-    with st.container(border=True):     # Create a container for the LDA model
+    
+    # Create a container for the LDA model
+    with st.container(border=True):     
         col1, col2 = st.columns([1, 2], gap="large")
         num_topics = col1.slider("Number of Topics", min_value=1, max_value=(end_index-start_index)*2, value=end_index-start_index, help="The number of topics to be extracted from the scrapped News")
         lda_model = LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topics, passes=num_topics)

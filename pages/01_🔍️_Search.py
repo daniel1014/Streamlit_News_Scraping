@@ -42,6 +42,7 @@ with st.expander('🔍Instructions and Tips', expanded=False):
 ''')
      st.write("")
 
+#// Sidebar
 # Date restriction buttons and selector
 with st.sidebar:
     date_radio = st.radio(
@@ -88,6 +89,7 @@ with st.sidebar:
     elif gl_radio == "South Africa":
         gl = "za"
 
+#// Input queries
 data_demo = [{'supplier':"Enercon",'focus':'Supply Chain', 'num':'10'}]
 df_database_demo = pd.DataFrame(data_demo)
 
@@ -102,7 +104,7 @@ input_queries = st.data_editor(df_database_demo, num_rows="dynamic", hide_index=
             )
         })
  
-# Search function
+#// Search & Scrapping functions
 @st.cache_data
 def search_google(query, date_restrict=None, gl=None, num=10):
     """Search Google for the input queries and return the results."""
@@ -121,37 +123,39 @@ def search_google(query, date_restrict=None, gl=None, num=10):
             all_results.append({'supplier': supplier_input, 'focus': focus_input, 'title': result['title'], 'date' : date, 'snippet':snippet, 'URL': result['link']}) 
     return all_results
 
+# can't use cache_data here as this is incompatible to re-display the containers
 def extract_scrapped_content(all_results):
     """Extract the main content from the scraped URLs using the boilerpy3 library."""
-    msg = st.toast("Scraping News Websites...", icon='⏳')
-    count=0
-    for i in range(len(all_results)):
-        try:
-            response = requests.get(all_results[i]['URL'], headers={'User-Agent': 'Mozilla/5.0'}, timeout=3)
-            if response.status_code == 200:
-                # Instantiate the extractor
-                extractor = extractors.ArticleExtractor()
-                # Extract the main content
-                content = extractor.get_content(response.text)
-                all_results[i]['scrapped_text'] = content
-                count+=1
-                st.toast(f"Retrieved the News No. {i+1} Successfully! URL:{all_results[i]['URL']}", icon='🔥')
-            else:
-                st.toast(f"Failed to retrieve the News website - {i+1}. Response status code: {response.status_code}")
-                st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']}. Response status code: {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            st.toast(f"Failed to retrieve {all_results[i]['URL']} due to timeout")
-            st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']} due to timeout")
-    st.toast(f"News Scraping Completed!", icon='🎉')
-    st.sidebar.write(f"Retrieved {count}/{len(all_results)} websites successfully")
+    with st.spinner(text="Retrieving and scraping the news articles – hang tight! This should take 20 seconds to 1 minute."):
+        st.toast("Scraping News Websites...", icon='⏳')
+        count=0
+        for i in range(len(all_results)):
+            try:
+                response = requests.get(all_results[i]['URL'], headers={'User-Agent': 'Mozilla/5.0'}, timeout=3)
+                if response.status_code == 200:
+                    # Instantiate the extractor
+                    extractor = extractors.ArticleExtractor()
+                    # Extract the main content
+                    content = extractor.get_content(response.text)
+                    all_results[i]['scrapped_text'] = content
+                    count+=1
+                    st.toast(f"Scrapped News No.{i+1} Successfully! News Title: {all_results[i]['title']}", icon='🔥')
+                else:
+                    st.toast(f"Failed to retrieve the News website - {i+1}. Response status code: {response.status_code}")
+                    st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']}. Response status code: {response.status_code}")
+            except requests.exceptions.RequestException as e:
+                st.toast(f"Failed to retrieve {all_results[i]['URL']} due to timeout")
+                st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']} due to timeout")
+        st.toast(f"News Scraping Completed!", icon='🎉')
+        st.sidebar.write(f"Retrieved {count}/{len(all_results)} websites successfully")
     return all_results
 
+#// Summarization functions
 @st.cache_resource
 def load_summarizer():
     """Load the BART summarization model from Hugging Face, which is pre-trained on English language and fine-tuned on CNN Daily Mail."""
     return pipeline("summarization", model="facebook/bart-large-cnn")
 
-# Summarize the content
 @st.cache_data
 def summarize_content(text: str): 
     """Summarize the input text using the BART model."""
@@ -167,6 +171,8 @@ def summarize_content(text: str):
 if 'search_trigger' not in st.session_state:
     st.session_state['search_trigger'] = False
 
+
+#// Display the search results in the tabs
 # Search the input queries and scrape the content from the URLs.
 if st.button('Search'):
     st.session_state['_input_queries'] = input_queries.to_dict('records')
@@ -211,5 +217,4 @@ if st.session_state['tab_id'] is not None:
                 tile.write(f"URL: {st.session_state['all_results'][result_index]['URL']}")
 
     
-
-st.session_state
+# st.session_state
