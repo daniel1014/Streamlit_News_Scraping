@@ -9,29 +9,22 @@ import extra_streamlit_components as stx
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import general_utils
+
+st.set_page_config(
+    page_title="Topic Modelling",
+    page_icon="🧊",
+    layout="wide",
+    menu_items={
+        'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
+        'Report a bug': "mailto:Daniel.Wong3@aecom.com",
+        'About': "# This is a *News Scraping Analytics* app!"
+    }
+)
+general_utils.add_logo()
 
 nltk.download('stopwords')
 nltk.download('punkt')
-
-def add_logo():
-    """
-    Adds a logo to the Streamlit sidebar.
-    """
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/AECOM_logo.svg/2560px-AECOM_logo.svg.png);
-                background-repeat: no-repeat;
-                padding-top: 15px;
-                background-position: 20px 20px;
-                background-size: 200px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-add_logo()
 
 def preprocess_text(text_ls):
     preprocess_text = []

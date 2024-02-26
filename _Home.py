@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import general_utils
 
 st.set_page_config(
     page_title="Home Page",
@@ -12,22 +13,8 @@ st.set_page_config(
     layout="wide"
 )
 
-def add_logo():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/AECOM_logo.svg/2560px-AECOM_logo.svg.png);
-                background-repeat: no-repeat;
-                padding-top: 15px;
-                background-position: 20px 20px;
-                background-size: 200px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-add_logo()
+
+general_utils.add_logo()
 
 
 st.title("News Scraping Analytics Enhanced by :rainbow[Llama 2 & Mistral] chatbot" + "  🦙💬  ")
@@ -41,29 +28,22 @@ st.video(video_bytes)
 ## Introduction
 col1, col2 = st.columns(2)
 with col1.container(height=310):
-    st.subheader("Llama 2 Chatbot")
-    st.markdown("Chat with the Llama 2 Chatbot (invented by Meta) and the state-of-the-art RAG algorithms to generate a conversation based on the latest news article that we just scraped. Harness the power of AI to distill complex texts into concise, easily digestible summaries.")
-    st.caption("Explore more about how did Llama 2 (& Mistral) outperform OpenAI's ChatGPT: [here](https://textcortex.com/post/llama-2-vs-chatgpt)")
-    st.caption("And how can the context augmentation/RAG techniques benefit to this LLM system: [here](https://docs.llamaindex.ai/en/stable/index.html)")
+    st.subheader("🦙💬 Llama 2 Chatbot")
+    st.markdown("Engage with our cutting-edge Llama 2 Chatbot, a brainchild of Meta, now enhanced with the revolutionary RAG algorithms. This chatbot doesn't just converse - it intelligently generates discussions based on the freshest news articles scraped right off the web. Experience the transformative power of AI as it masterfully condenses intricate texts into crisp, comprehensible summaries. Dive into the future of communication with our advanced chatbot.")
+    st.markdown("*Discover how Llama 2 beat OpenAI's ChatGPT [here](https://textcortex.com/post/llama-2-vs-chatgpt)*")
+    st.markdown("*Learn more about how Mistral 7B outperformed OpenAI's ChatGPT [here](https://mistral.ai/news/announcing-mistral-7b/)*")
+    st.markdown("*Explore the advantages of Context Augmentation and RAG techniques in enriching our LLM models. Learn more [here](https://docs.llamaindex.ai/en/stable/index.html)*")
+
 
 with col2.container(height=150):
-    st.subheader("Customized Searching")
+    st.subheader("🔍️ Customized Searching")
     st.markdown("Utilize the search engine API to retrieve latest news from Google. Intelligently parse and scrape the news article from each website, logged your historic input, and store the data in the database.")
 
 with col2.container(height=150):
-    st.subheader("Advanced Analysis")
+    st.subheader("📈 Advanced Analysis")
     st.markdown("Perform sentiment analysis and topic modelling based on the scrapped news article and visualize the result in an intuitive bar chart or an interactive dashboard.")
 
-if st.checkbox('Show instructions'):
-    st.markdown('''
-* This tool is used to scrape news from Google Search Engine. Please **Login** with your username to load your historic input data (a new username will be registered if it is not exisiting in database). 
-* Please enter your desired input query(s) including supplier, focus (eg. Enercon Supply Chain), and number of search. 
-* When you're ready, click **'Search'** and an output table will be generated along with the tabs corresponding to your choice of input above. 
-* Next, click **'Sentiment Analysis'** and views the related results from the bar chart. 
-* If you want to save the current input(s) into the database, click **"Uploaded Input to AECOM database"** so you can download your data with your unique username when you are back next time. Furthermore, both the news output and sentiment analysis results can be downloaded as Excel or CSV file. 
-''')
-
-
+st.image('assets/Llama2-diagram.jpg', width=900, caption='a high-level overview of the Llama2 chatbot app')
 
 
 # Username input

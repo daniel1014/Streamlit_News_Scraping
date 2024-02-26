@@ -3,29 +3,20 @@ import pandas as pd
 from transformers import pipeline
 import altair as alt
 from textblob import TextBlob
+import general_utils
 
 st.set_page_config(
     page_title="Sentiment Analysis", 
     page_icon="📊",
     layout='wide', 
+    menu_items={
+        'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
+        'Report a bug': "mailto:Daniel.Wong3@aecom.com",
+        'About': "# This is a *News Scraping Analytics* app!"
+    },
 )
 
-def add_logo():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/AECOM_logo.svg/2560px-AECOM_logo.svg.png);
-                background-repeat: no-repeat;
-                padding-top: 15px;
-                background-position: 20px 20px;
-                background-size: 200px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-add_logo()
+general_utils.add_logo()
 
 st.write("# Sentiment Analysis")
 

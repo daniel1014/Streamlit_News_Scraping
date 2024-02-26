@@ -5,6 +5,7 @@ from llama_index.core import VectorStoreIndex, Document, Settings
 from llama_index.llms.replicate import Replicate
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 # from llama_index.core.llms.llama_utils import messages_to_prompt, completion_to_prompt
+import general_utils
 
 # App title
 st.set_page_config(
@@ -20,22 +21,7 @@ st.set_page_config(
 
 config = dotenv_values(".env")
 
-def add_logo():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/AECOM_logo.svg/2560px-AECOM_logo.svg.png);
-                background-repeat: no-repeat;
-                padding-top: 15px;
-                background-position: 20px 20px;
-                background-size: 200px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-add_logo()
+general_utils.add_logo()
 
 def initialize_llm(model, temperature, context_window):
     """
@@ -82,7 +68,7 @@ with st.sidebar:
             help="""Activate this feature to load the documents from scrapped articles into the LLM model, 
             empowered by Retrieval Augmentation Generation (RAG) architecture with Llama_Index library.""")
     st.subheader('Models and parameters')
-    selected_model = st.sidebar.selectbox('Choose a Llama2 model', ['Llama2-7B', 'Mistral-7B-instruct-v0.2'], key='selected_model')
+    selected_model = st.sidebar.selectbox('Choose a Llama2 model', ['Llama2-7B', 'Mistral-7B-instruct-v0.2'], key='selected_model', help="Llama2-7B is a state-of-the-art open source large language model (LLM) released by Meta, while Mistral-7B-instruct-v0.2 is a improved instruct fine-tuned version of Mistral-7B-Instruct-v0.1, which outperforms Llama 2 13B on all benchmarks.")
     if selected_model == 'Llama2-7B':
         # model = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'
         model = "meta/llama-2-7b-chat"
