@@ -10,7 +10,7 @@ st.set_page_config(
         'Report a bug': "mailto:Daniel.Wong3@aecom.com",
         'About': "# This is a *News Scraping Analytics* app!"
     },
-    layout="wide"
+    # layout="wide"
 )
 
 
@@ -43,7 +43,7 @@ with col2.container(height=150):
     st.subheader("📈 Advanced Analysis")
     st.markdown("Perform sentiment analysis and topic modelling based on the scrapped news article and visualize the result in an intuitive bar chart or an interactive dashboard.")
 
-st.image('assets/Llama2-diagram.jpg', width=900, caption='a high-level overview of the Llama2 chatbot app')
+st.image('assets/Llama2-diagram.jpg', width=700, caption='A high-level overview of the Llama2 chatbot app')
 
 
 # Username input
