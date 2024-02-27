@@ -8,10 +8,10 @@ import os
 class DatabaseConnection:
     def __init__(self):
         config = dotenv_values(".env")
-        self.server = os.getenv('Server')
-        self.database = os.getenv('Database')
-        self.user = os.getenv('User')
-        self.password = os.getenv('Pass')
+        self.server = config['Server']
+        self.database = config['Database']
+        self.user = config['User']
+        self.password = config['Pass']
 
     def read_db_conn_details(self) -> dict:
         params = f"DRIVER=ODBC Driver 17 for SQL Server;SERVER={self.server};DATABASE={self.database};UID={self.user};PWD={self.password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"

@@ -51,7 +51,7 @@ if not st.session_state.get("all_results") or not st.session_state.get("_input_q
     st.stop()
 
 input_queries = st.dataframe(st.session_state['_input_queries'],  hide_index=True, width=1000,
-            column_config={"num": st.column_config.SelectboxColumn(
+            column_config={"num_search": st.column_config.SelectboxColumn(
             "Number of Search",
             help="How many search results do you want to retrieve?",
             width=20,
@@ -65,7 +65,7 @@ input_queries = st.dataframe(st.session_state['_input_queries'],  hide_index=Tru
 if "tab_id_topic" not in st.session_state:
     st.session_state['tab_id_topic'] = None
 
-st.session_state['tab_id_topic'] = stx.tab_bar(data=[stx.TabBarItemData(id=st.session_state['_input_queries'][i]['supplier'], title=st.session_state['_input_queries'][i]['supplier']+' '+st.session_state['_input_queries'][i]['focus'], description=f"Display {st.session_state['_input_queries'][i]['num']} scrapped News") for i in range(len(st.session_state['_input_queries']))] , default=st.session_state['_input_queries'][0]['supplier'])
+st.session_state['tab_id_topic'] = stx.tab_bar(data=[stx.TabBarItemData(id=st.session_state['_input_queries'][i]['supplier'], title=st.session_state['_input_queries'][i]['supplier']+' '+st.session_state['_input_queries'][i]['focus'], description=f"Display {st.session_state['_input_queries'][i]['num_search']} scrapped News") for i in range(len(st.session_state['_input_queries']))] , default=st.session_state['_input_queries'][0]['supplier'])
 
 # Creating visualization for the LDA model, refactored from https://neptune.ai/blog/pyldavis-topic-modelling-exploration-tool-that-every-nlp-data-scientist-should-know
 if st.session_state['tab_id_topic'] is not None:
@@ -106,5 +106,8 @@ if st.session_state['tab_id_topic'] is not None:
 
         # Display the HTML in the Streamlit app
         st.components.v1.html(vis_html, width=1400, height=800, scrolling=True)
+
+# Footer
+general_utils.add_footer()
 
 # st.session_state

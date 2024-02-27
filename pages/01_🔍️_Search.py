@@ -21,6 +21,11 @@ st.set_page_config(
 
 general_utils.add_logo()
 
+if 'df_input_database' not in st.session_state:
+    st.info('Demo Input is as below', icon="ℹ️")
+else:
+    st.info("Your historic input data is as below, please click 'Search' to retrieve the latest information", icon="ℹ️")
+
 st.write("# Welcome to the Search Engine! 👋")
 # Instructions
 with st.expander('🔍Instructions and Tips', expanded=False):
@@ -81,11 +86,11 @@ with st.sidebar:
         gl = "za"
 
 #// Input queries
-data_demo = [{'supplier':"Enercon",'focus':'Supply Chain', 'num':'10'}]
-df_database_demo = pd.DataFrame(data_demo)
+input_demo = [{'supplier':"Enercon",'focus':'Supply Chain', 'num_search':'10'}]
+df_input = st.session_state.df_input_database if 'df_input_database' in st.session_state else pd.DataFrame(input_demo)
 
-input_queries = st.data_editor(df_database_demo, num_rows="dynamic", hide_index=True, width=1000, key="input_queries",
-            column_config={"num": st.column_config.SelectboxColumn(
+input_queries = st.data_editor(df_input, num_rows="dynamic", hide_index=True, width=1000, key="input_queries",
+            column_config={"num_search": st.column_config.SelectboxColumn(
             "Number of Search",
             help="How many search results do you want to retrieve?",
             width=20,
@@ -97,15 +102,15 @@ input_queries = st.data_editor(df_database_demo, num_rows="dynamic", hide_index=
  
 #// Search & Scrapping functions
 @st.cache_data
-def search_google(query, date_restrict=None, gl=None, num=10):
+def search_google(query, date_restrict=None, gl=None, num_search=10):
     """Search Google for the input queries and return the results."""
     all_results= []
     for index, row in input_queries.iterrows():
         supplier_input = row['supplier']
         focus_input = row['focus']
         query = supplier_input + " " + focus_input
-        num = row['num']
-        search_results = google_search(query, date_restrict=date_restrict, gl=gl, num=num)
+        num_search = row['num_search']
+        search_results = google_search(query, date_restrict=date_restrict, gl=gl, num=num_search)
         for result in search_results:
             if " ... " in result['snippet']:
                 date, snippet = result['snippet'].split(" ... ", 1)
@@ -174,7 +179,7 @@ if st.button('Search'):
 
 # Initialize tabs, used supplier as tab_id
 if st.session_state['search_trigger'] is True:
-    st.session_state['tab_id'] = stx.tab_bar(data=[stx.TabBarItemData(id=input_queries.iloc[i]['supplier'], title=input_queries.iloc[i]['supplier']+' '+input_queries.iloc[i]['focus'], description=f"Display {input_queries.iloc[i]['num']} scrapped News") for i in range(len(input_queries))] , default=input_queries.iloc[0]['supplier'])
+    st.session_state['tab_id'] = stx.tab_bar(data=[stx.TabBarItemData(id=input_queries.iloc[i]['supplier'], title=input_queries.iloc[i]['supplier']+' '+input_queries.iloc[i]['focus'], description=f"Display {input_queries.iloc[i]['num_search']} scrapped News") for i in range(len(input_queries))] , default=input_queries.iloc[0]['supplier'])
 
 # Initialize the tab_id
 if "tab_id" not in st.session_state:
@@ -207,5 +212,7 @@ if st.session_state['tab_id'] is not None:
                 tile.write(f"Snippet: {st.session_state['all_results'][result_index]['snippet']}")
                 tile.write(f"URL: {st.session_state['all_results'][result_index]['URL']}")
 
+# Footer
+general_utils.add_footer()
     
 # st.session_state

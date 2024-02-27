@@ -107,4 +107,7 @@ def display_scatter_chart(df_polarity):
 if st.button("Sentiment Analysis"):
     perform_sentiment_analysis()
 
+# Footer
+general_utils.add_footer()
+
 # st.session_state

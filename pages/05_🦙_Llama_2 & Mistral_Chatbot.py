@@ -44,7 +44,7 @@ def initialize_llm(model, temperature, context_window):
     return llm
 
 if "loaded_tokens" not in st.session_state:
-    st.session_state.loaded_tokens = 4000
+    st.session_state.loaded_tokens = 8000
 
 ## The script below is refactored from https://blog.streamlit.io/how-to-build-a-llama-2-chatbot/#3-build-the-app
 # Replicate Credentials
@@ -148,3 +148,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
                     placeholder.markdown(full_response)
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message) # Add response to message history
+
+# Footer
+general_utils.add_footer()

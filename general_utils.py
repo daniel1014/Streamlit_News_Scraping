@@ -15,3 +15,6 @@ def add_logo():
         """,
         unsafe_allow_html=True,
     )
+
+def add_footer():
+    st.sidebar.markdown(f"*:gray[logged in as {st.session_state.username}]*" if st.session_state.get("username") else "*Not logged in*")
