@@ -46,32 +46,37 @@ def preprocess_text(text_ls):
 
 st.write("# Topic Modelling")
 
-if not st.session_state.get("all_results") or not st.session_state.get("_input_queries"):
+if not st.session_state.get("all_results"):
     st.warning("Please perform a search first.")
     st.stop()
 
-input_queries = st.dataframe(st.session_state['_input_queries'],  hide_index=True, width=1000,
-            column_config={"num_search": st.column_config.SelectboxColumn(
-            "Number of Search",
-            help="How many search results do you want to retrieve?",
-            width=20,
-            default=10,
-            options=[5,10],
-            required=True,
-            )
-        })
+# display input queries
+df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
+df.index = df.index + 1  # Adjust index to start from 1
+df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
+st.table(df)
 
 # Initialize the trigger for the topic modelling
 if "tab_id_topic" not in st.session_state:
     st.session_state['tab_id_topic'] = None
 
-st.session_state['tab_id_topic'] = stx.tab_bar(data=[stx.TabBarItemData(id=st.session_state['_input_queries'][i]['supplier'], title=st.session_state['_input_queries'][i]['supplier']+' '+st.session_state['_input_queries'][i]['focus'], description=f"Display {st.session_state['_input_queries'][i]['num_search']} scrapped News") for i in range(len(st.session_state['_input_queries']))] , default=st.session_state['_input_queries'][0]['supplier'])
+st.session_state['tab_id_topic'] = stx.tab_bar(
+        data=[
+            stx.TabBarItemData(
+                id=st.session_state.search_params[i]['search_ID'], 
+                title=' '.join(st.session_state.search_params[i]['supplier'].split()[:2]) + ' ' + st.session_state.search_params[i]['focus'], 
+                description=f"Display {st.session_state.search_params[i]['num_search']} scrapped News"
+            ) 
+            for i in range(len(st.session_state['search_params']))
+        ], 
+        default=st.session_state.search_params[0]['search_ID']
+    )
 
 # Creating visualization for the LDA model, refactored from https://neptune.ai/blog/pyldavis-topic-modelling-exploration-tool-that-every-nlp-data-scientist-should-know
 if st.session_state['tab_id_topic'] is not None:
     df_all_results = pd.DataFrame(st.session_state['all_results'])      # Convert the list of dictionaries to a DataFrame
-    start_index = df_all_results.loc[df_all_results['supplier'] == st.session_state['tab_id_topic']].index[0]
-    end_index = df_all_results.loc[df_all_results['supplier'] == st.session_state['tab_id_topic']].index[-1] + 1
+    start_index = df_all_results.loc[df_all_results['search_ID'] == int(st.session_state['tab_id_topic'])].index[0]
+    end_index = df_all_results.loc[df_all_results['search_ID'] == int(st.session_state['tab_id_topic'])].index[-1] + 1
     
     text_corpus = []
     # Extract the scrapped text from the DataFrame

@@ -24,16 +24,10 @@ if not st.session_state.get("all_results"):
     st.warning("Please perform a search first.")
     st.stop()
         
-input_queries = st.dataframe(st.session_state['_input_queries'],  hide_index=True, width=1000,
-            column_config={"num": st.column_config.SelectboxColumn(
-            "Number of Search",
-            help="How many search results do you want to retrieve?",
-            width=20,
-            default=10,
-            options=[5,10],
-            required=True,
-            )
-        })
+df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
+df.index = df.index + 1  # Adjust index to start from 1
+df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
+st.table(df)
 
 # Create a sentiment analysis pipeline
 nlp = pipeline('sentiment-analysis', model="distilbert-base-uncased-finetuned-sst-2-english")
@@ -87,7 +81,7 @@ def display_charts(df_sentiment_result, df_polarity):
 
 def display_bar_chart(df_long):
     chart = alt.Chart(df_long).mark_bar().encode(
-        x='value:Q',
+        x=alt.X('value:Q', scale=alt.Scale(nice=False)),
         y='index:N',
         color=alt.Color('variable:N', scale=alt.Scale(domain=['positive', 'neutral', 'negative'], range=['#AECC53', '#DAD8CC', '#C70C6F'])),
         tooltip=['index:N', 'variable:N', 'value:Q']
@@ -104,8 +98,7 @@ def display_scatter_chart(df_polarity):
     ).properties(title='Polarity of News Articles')
     st.altair_chart(chart, use_container_width=True)
 
-if st.button("Sentiment Analysis"):
-    perform_sentiment_analysis()
+perform_sentiment_analysis()
 
 # Footer
 general_utils.add_footer()
