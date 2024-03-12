@@ -4,11 +4,7 @@ import db_connection
 from streamlit_searchbox import st_searchbox
 import pandas as pd
 from typing import List, Tuple
-from gsearch import google_search
-import requests
-from boilerpy3 import extractors
 import datetime
-import time
 
 # Initialize the app
 st.set_page_config(
