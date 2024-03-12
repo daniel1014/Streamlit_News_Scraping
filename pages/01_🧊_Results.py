@@ -11,8 +11,8 @@ from dateutil.parser import parse
 
 # 1 / Page Config
 st.set_page_config(
-    page_title="Search Engine",
-    page_icon="🔍️",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     layout="wide",
     menu_items={
         'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
@@ -102,12 +102,14 @@ def extract_scrapped_content(all_results):
         st.sidebar.write(f"Retrieved {count}/{len(all_results)} websites successfully")
     return all_results
 
+st.write("# Results")
+
 # 2.3 / Execute Search and display input queries
 if 'search_trigger' not in st.session_state:        # Stop the script if search trigger is not activated 
     st.warning("Please return and perform a search first.")
     st.stop() 
 
-st.write("### Your search inputs and results are as follows 👇:")
+st.write("#### Your search queries and results are as follows 👇:")
 df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
 df.index = df.index + 1  # Adjust index to start from 1
 df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
@@ -140,7 +142,6 @@ def summarize_content(text: str):
 def perform_sentiment_analysis(text: str):
     """Perform sentiment analysis on the input text."""
     polarity = TextBlob(text).sentiment.polarity
-    print(polarity, text[:100])
     if polarity > 0.1:
         return ":blush:"
     elif polarity < 0.02:
@@ -200,8 +201,3 @@ if st.session_state['tab_id'] is not None:
 
 # Footer
 general_utils.add_footer()
-    
-st.session_state
-
-# response = requests.get("https://www.digitaljournal.com/pr/small-medium-wind-turbines-market-next-big-thing-major-giants-vestas-enercon-senvion", headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, Like Gecko) Chrome/79.0.3945.88 Safari/537.36'}, timeout=3)
-# print(response.status_code)

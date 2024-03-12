@@ -12,14 +12,14 @@ from nltk.corpus import stopwords
 import general_utils
 
 st.set_page_config(
-    page_title="Topic Modelling",
-    page_icon="🧊",
-    layout="wide",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     menu_items={
         'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
         'Report a bug': "mailto:Daniel.Wong3@aecom.com",
         'About': "# This is a *News Scraping Analytics* app!"
-    }
+    },
+    layout="wide",
 )
 general_utils.add_logo()
 
@@ -43,8 +43,6 @@ def preprocess_text(text_ls):
         else:
             print(f"Text is not a string: {text}")
     return preprocess_text
-
-st.write("# Topic Modelling")
 
 if not st.session_state.get("all_results"):
     st.warning("Please perform a search first.")

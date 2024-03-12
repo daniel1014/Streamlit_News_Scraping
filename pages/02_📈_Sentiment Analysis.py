@@ -6,8 +6,8 @@ from textblob import TextBlob
 import general_utils
 
 st.set_page_config(
-    page_title="Sentiment Analysis", 
-    page_icon="📊",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     layout='wide', 
     menu_items={
         'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',

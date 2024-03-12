@@ -9,8 +9,8 @@ import general_utils
 
 # App title
 st.set_page_config(
-    page_title="Llama 2 Chatbot", 
-    page_icon="💬",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     # layout='wide', 
     menu_items={
     'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',

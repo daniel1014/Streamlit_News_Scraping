@@ -8,8 +8,8 @@ import datetime
 
 # Initialize the app
 st.set_page_config(
-    page_title="Search Page",
-    page_icon="🔍️",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     menu_items={
         'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
         'Report a bug': "mailto:Daniel.Wong3@aecom.com",
@@ -131,7 +131,7 @@ if headers[0].button(":heavy_plus_sign: Add"):
 # Create the search forms
 for i in st.session_state['searches']:
     search_container = main_container.container()
-    row = search_container.columns([0.6,2,2,1], gap="medium")
+    row = search_container.columns([0.6,2,2,1], gap="small")
 
     # Delete button
     if row[0].button("🗑️", key=f"search_delete_{i}"):
@@ -152,7 +152,7 @@ for i in st.session_state['searches']:
         focus = st.selectbox(
             'Which focus would you like to search about?',
             label_visibility="collapsed",
-            options=('Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Financial Planning', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Other (Please specify)'),
+            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Financial Planning', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Other (Please specify)'),
             index=None,
             placeholder='Select a focus',
             key=f"search_focus_{i}"
@@ -181,7 +181,7 @@ for i in st.session_state['searches']:
 row_last = main_container.columns([1,1,2])
 if row_last[1].button("🔍 Search the web", type="primary"):
     st.session_state['search_trigger']=True
-    st.switch_page("pages/01_😊_Results.py")
+    st.switch_page("pages/01_🧊_Results.py")
 
 # set the style
 general_utils.set_radio_style()

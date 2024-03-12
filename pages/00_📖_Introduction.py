@@ -6,14 +6,13 @@ import db_connection
 
 # 1 / Page Config
 st.set_page_config(
-    page_title="Introduction",
-    page_icon="📖",
+    page_title="News Scraping",
+    page_icon="assets/page_icon.png",
     menu_items={
         'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
         'Report a bug': "mailto:Daniel.Wong3@aecom.com",
         'About': "# This is a *News Scraping Analytics* app!"
     },
-    # initial_sidebar_state="collapsed",
     layout="wide"
 )
 general_utils.add_logo()
@@ -27,8 +26,8 @@ if row[1].button("Get Started!", key="get_started", type="primary"):
 general_utils.set_primary_button_style("#008768")
 
 # 2.2 / Header image
-row_1 = st.columns([1,4])
-row_1[1].image('assets/using_laptop.jpg', width=700, caption='Stay informed with the latest news and trends across the web')
+row_1 = st.columns([1,1.5,1])
+row_1[1].image('assets/using_laptop.jpg', caption='Stay informed with the latest news and trends across the web')
 
 # 3 / Introduction
 st.subheader("Key Features")
@@ -96,7 +95,7 @@ with st.expander("F&Q 5: Why the RAG technique matters to the chatbot?"):
     st.markdown("The retrieval component retrieves relevant documents from a large corpus, such as the latest news articles scraped from the internet or local documents. The augmentation component then augments the input prompt with information from the retrieved documents. Finally, the generation component generates a response based on the augmented input prompt.")
     st.markdown("This technique allows our chatbot to answer questions based on the most recent information we provide, rather than relying solely on a static dataset. This dynamic learning capability makes our chatbot more versatile and effective, enabling it to provide more accurate, up-to-date, and contextually relevant responses.")
 
-with st.expander("F&Q 6: Is there any limitation of using this app?"):
+with st.expander("F&Q 6: Is there any usage limitation of this app?"):
     st.markdown("Yes, there are some limitations to using this app:")
     st.markdown("1. **API Rate Limit**: The app uses the Google Custom Search JSON API to scrape the web for news articles. This API has a daily limit of 100-200 queries per day. Once this limit is reached, the app will be unable to perform any further searches until the next day. Additional requests please contact the developer *(you can get more info to contact us through the build-in menu at top right corner)*.")
     st.markdown("2. **Cloud Provider Pricing**: The chatbot uses the Replicate.ai API to generate responses to user queries. Though we're purely using open-source langugage models like Llama 2 & Mistral, we still need to host them on high-performance computing systems which actuall require cost, priced by the length of questions (as input) and response generated (as output). To know more about the specific pricing, please contact the developer *(you can get more info to contact us through the build-in menu at top right corner)*.")
@@ -106,7 +105,7 @@ with st.expander("F&Q 6: Is there any limitation of using this app?"):
 st.subheader("Technical Overview")
 with st.expander('Click to view the Llama 2 Chatbot architecture diagram'):
     st.image('assets/Llama2-diagram.jpg', width=700, caption='A high-level overview of the Llama2 chatbot app')
-with st.expander("Explore more about the latest LLM technology"):
+with st.expander("Explore more about the latest LLM technologies that are being leveraged by our chatbot"):
     st.markdown("*Discover how Llama 2 beat OpenAI's ChatGPT [here](https://textcortex.com/post/llama-2-vs-chatgpt)*")
     st.markdown("*Learn more about how Mistral 7B outperformed OpenAI's ChatGPT [here](https://mistral.ai/news/announcing-mistral-7b/)*")
     st.markdown("*Explore the advantages of Context Augmentation and RAG techniques in enriching our LLM models. Learn more [here](https://docs.llamaindex.ai/en/stable/index.html)*")
