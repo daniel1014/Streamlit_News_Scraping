@@ -25,7 +25,7 @@ general_utils.add_logo()
 general_utils.set_page_background_local("assets/background.png")
 
 for x in range(4):
-    st.title("")        # Add some space on top
+    st.title("", anchor=False)        # Add some space on top
 
 # st.markdown("<h2 style='text-align: left; color: white;'>News Scraping App</h5>", unsafe_allow_html=True)
 # st.markdown("<h2 style='text-align: center; color: white;'>Let us do the search for you!</h2>", unsafe_allow_html=True)
