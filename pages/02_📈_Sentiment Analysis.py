@@ -39,14 +39,14 @@ def perform_sentiment_analysis():
     sentiment_result, df_polarity = analyze_sentiment(sentiment_input)
     df_sentiment_result = pd.DataFrame(sentiment_result).T
     display_charts(df_sentiment_result, df_polarity)
-    # st.write(df_polarity)
+    st.write(df_polarity.drop(columns=['Number of News Articles']))
 
 def build_sentiment_input():
     sentiment_input = {}
     for row in st.session_state["all_results"]:
         key = f"{row['supplier']} {row['focus']}"
         text = row.get('scrapped_text', row['snippet'])
-        sentiment_input.setdefault(key, []).append({'title': row['title'], 'text': text, 'date': row['date']})
+        sentiment_input.setdefault(key, []).append({'title': row['title'], 'text': text, 'date': row['date'], 'url': row['URL']})
     return sentiment_input
 
 def analyze_sentiment(sentiment_input):
@@ -59,11 +59,14 @@ def analyze_sentiment(sentiment_input):
             title = news['title']
             text = news['text']
             date = news['date']
+            url = news['url']
             polarity = TextBlob(f"{title} {text}").sentiment.polarity
-            polarity_data.append({'supplier_focus': company_focus, 'news_title' : title, 'polarity': polarity, 'news_number': news_number, 'date': date})
+            polarity_data.append({'Supplier & focus': company_focus, 'News Title' : title, 'Date': date, 'Sentiment Score': polarity, 'Number of News Articles': news_number, 'Link': url})
             sentiment_result[company_focus][categorize_sentiment(polarity)] += 1
             news_number += 1
     df_polarity = pd.DataFrame(polarity_data)
+    df_polarity = df_polarity.reindex(columns=['Supplier & focus', 'News Title', 'Date', 'Sentiment Score', 'Number of News Articles', 'Link'])
+    df_polarity.index = df_polarity.index + 1
     return sentiment_result, df_polarity
 
 def categorize_sentiment(polarity):
@@ -89,13 +92,49 @@ def display_bar_chart(df_long):
     st.altair_chart(chart, use_container_width=True, theme=None)
  
 def display_scatter_chart(df_polarity):
-    df_polarity = df_polarity.reset_index().rename(columns={'news_number': 'Number of News Articles','polarity':'Sentiment Score', 'supplier_focus': 'Supplier & focus', 'news_title': 'News Title'})
-    chart = alt.Chart(df_polarity).mark_point(size=100).encode(
+    df_polarity = df_polarity.reset_index()
+    
+    base = alt.Chart(df_polarity).encode(
         x=alt.X('Number of News Articles', scale=alt.Scale(domain=(1, df_polarity['Number of News Articles'].max())), axis=alt.Axis(format='d')),
         y='Sentiment Score',
         color=alt.Color('Supplier & focus', scale=alt.Scale(range=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])),
-        tooltip=['News Title', 'Supplier & focus', 'date', 'Sentiment Score']
-    ).properties(title='Sentiment Distribution of News Articles')
+        tooltip=['Supplier & focus', 'News Title', 'Date', 'Sentiment Score']
+    )
+    
+    scatter_plot = base.mark_point(size=100)
+    
+    text_positive = base.transform_filter(
+        alt.datum['Sentiment Score'] > 0.1
+    ).mark_text(
+        align='left',
+        baseline='middle',
+        dx=7  # Nudges text to right so it doesn't appear on top of the bar
+    ).encode(
+        text=alt.value('Positive')
+    )
+    
+    text_negative = base.transform_filter(
+        alt.datum['Sentiment Score'] < 0.02
+    ).mark_text(
+        align='left',
+        baseline='middle',
+        dx=7  # Nudges text to right so it doesn't appear on top of the bar
+    ).encode(
+        text=alt.value('Negative')
+    )
+
+    text_neutral = base.transform_filter(
+        alt.datum['Sentiment Score'] >= 0.02 and alt.datum['Sentiment Score'] <= 0.1
+    ).mark_text(
+        align='left',
+        baseline='middle',
+        dx=7  # Nudges text to right so it doesn't appear on top of the bar
+    ).encode(
+        text=alt.value('Neutral')
+    )
+    
+    chart = (scatter_plot + text_positive + text_negative + text_neutral).properties(title='Sentiment Distribution of News Articles')
+    
     st.altair_chart(chart, use_container_width=True, theme=None)
 
 perform_sentiment_analysis()
