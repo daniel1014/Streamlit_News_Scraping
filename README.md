@@ -1,2 +1,3 @@
 A News Scraping Analytics App using Streamlit as frontend, integrated crazy amount of functions into it...
+
 Check it out at: https://news-scraping.streamlit.app/ 
