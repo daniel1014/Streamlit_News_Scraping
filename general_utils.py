@@ -114,5 +114,14 @@ def set_selectbox_style():
         unsafe_allow_html=True,
     )
 
+def hide_markdown_anchor_button():
+    st.markdown("""
+    <style>
+    div[data-testid="stMarkdown"] > div > div > h3 > div > a {
+        display: none;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 def add_footer():
     st.sidebar.markdown(f"*:gray[logged in as {st.session_state.username}]*" if st.session_state.get("username") else "*Not logged in*")

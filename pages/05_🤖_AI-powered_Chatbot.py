@@ -85,7 +85,7 @@ llm = initialize_llm(model)
 # st.session_state
 
 @st.cache_resource(show_spinner=False)
-def load_data(all_results):
+def load_data(all_results, model=selected_model):
     """
     Load the data from the search results and create a VectorStoreIndex.
     the model parameter is used to determine whether to run this function again when the spec is changed.
@@ -102,13 +102,13 @@ def load_data(all_results):
                               ) for i in range(len(all_results)) if all_results[i].get('scrapped_text') != ""]  # Filter out empty scraped text, as it would cause error in the VectorStoreIndex
         index = VectorStoreIndex.from_documents(documents)
         query_engine = index.as_query_engine(streaming=True, response_mode="tree_summarize")
+        print(f"Data loaded successfully! I am {selected_model} Chatbot!")
         return query_engine  
 
 # Load Data 
 all_results = st.session_state.all_results
 query_engine = load_data(all_results)
 st.info(f"*Loaded {st.session_state['loaded_tokens']} words from {len(st.session_state.all_results)} articles*", icon="ℹ️")
-print(f"Data loaded successfully! I am {selected_model} Chatbot!")
     
 
 # Store LLM generated responses

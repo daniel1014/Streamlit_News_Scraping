@@ -64,7 +64,7 @@ with st.expander("Click to watch the demo video"):
 # 5 / F&Q
 st.subheader("Frequently Asked Questions")
 # Engage with our cutting-edge Llama 2 Chatbot, a brainchild of Meta, now enhanced with the revolutionary RAG algorithms. This chatbot doesn't just converse - it intelligently generates discussions based on the freshest news articles scraped right off the web. Experience the transformative power of AI as it masterfully condenses intricate texts into crisp, comprehensible summaries. Dive into the future of communication with our advanced chatbot
-with st.expander("F&Q 1: Why should I use this app rather than Google search?"):
+with st.expander("FAQ 1: Why should I use this app rather than Google search?"):
     # st.markdown("<h5 style='text-align:left; color: black;'>This app offers several advantages over a traditional Google search:</h3>", unsafe_allow_html=True)
     st.markdown('This app offers several advantages over a traditional Google search:')         
     st.markdown('1. **Simultaneous Multiple Searches**: Instead of manually entering each query in Google, this app allows you to perform multiple searches simultaneously. This saves time and effort, especially when dealing with a large number of queries.')           
@@ -72,30 +72,30 @@ with st.expander("F&Q 1: Why should I use this app rather than Google search?"):
     st.markdown('3. **Sentiment Analysis**: The app can recognize the sentiment of the articles. It uses intuitive design elements like smiley faces and sad faces to represent positive and negative sentiments, making it easy to understand the overall tone of the content.')
     st.markdown('By integrating these features into a single app, it provides a more efficient and streamlined experience for users, making it a powerful tool for anyone who needs to perform extensive online research.')
 
-with st.expander("F&Q 2: How does this chatbot outperform other AI tools? (e.g. ChatGPT 3.5)?"):
+with st.expander("FAQ 2: How does this chatbot outperform other AI tools? (e.g. ChatGPT 3.5)?"):
     st.markdown("Our chatbot offers significant advantages over other AI tools like ChatGPT 3.5, particularly due to the integration of the RAG (Retrieval-Augmented Generation) technique:")
     st.markdown("1. **Utilization of Latest Information**: Our chatbot can utilize the latest information scraped from the internet or local documents. This ensures that the chatbot's responses are always up-to-date and relevant.")
     st.markdown("2. **Improved Contextual Understanding**: The RAG technique allows our chatbot to generate more accurate and contextually relevant responses. It retrieves relevant documents or text passages based on the latest information and uses them to generate responses.")
     st.markdown('3. **Answering Beyond Static Dataset**: Unlike traditional models that generate responses based on a fixed dataset, our chatbot can answer questions based on the information we provide. This allows it to answer questions beyond the scope of a static dataset.')
 
-with st.expander("F&Q 3: What are the Large Language Models (LLM) being used in the chatbot?"):
+with st.expander("FAQ 3: What are the Large Language Models (LLM) being used in the chatbot?"):
     st.markdown("The chatbot utilizes two Large Language Models (LLMs): Llama 2 and Mistral 7B.")
     st.markdown("**• Llama 2**: This is a state-of-the-art open-source LLM released by Meta. Known for its creativity, Llama 2 can generate human-like responses to text prompts, making it ideal for generating diverse and innovative responses.")
     st.markdown("**• Mistral 7B**: This is an improved, fine-tuned version of Mistral-7B-Instruct-v0.1. It outperforms Llama 2 13B on all benchmarks. Known for its precision, Mistral 7B can generate highly accurate and contextually relevant responses to text prompts.")
     st.markdown("In summary, while both models are powerful and capable of generating human-like responses, Llama 2 is more suited for tasks requiring creative output, whereas Mistral 7B excels in tasks requiring precision and accuracy.")
 
-with st.expander("F&Q 4: Will my data/my conversation leak to the external world by using this LLM chatbot?"):
+with st.expander("FAQ 4: Will my data/my conversation leak to the external world by using this LLM chatbot?"):
     st.markdown("To ensure optimal performance of LLM models, it is often necessary to execute them on high-performance computing systems, either locally or through cloud-based hosting solutions. In our specific scenario, we have chosen to utilize **Replicate.ai's** hosting capabilities via their API, facilitating the processing of data to generate responses from the language model.") 
     st.markdown("It is worth noting that Replicate.ai, in accordance with their privacy policy, affirms that data transmitted through their API is not utilized for the enhancement of their models. During transit, data is encrypted using HTTPS, thereby mitigating the risk of interception and unauthorized access by external parties.")
     st.markdown("However, it is prudent to acknowledge that the information forwarded to the API, encompassing user inputs and model-generated responses, traverses the internet to reach Replicate's servers. Subsequently, this data may be subject to logging and temporary storage by Replicate.ai for the purpose of refining their service offerings.")
     st.markdown("For more information, please refer to Replicate.ai's privacy policy [here](https://www.replicate.ai/privacy)")
 
-with st.expander("F&Q 5: Why the RAG technique matters to the chatbot?"):
+with st.expander("FAQ 5: Why the RAG technique matters to the chatbot?"):
     st.markdown("RAG (Retrieval Augmentation Generation) is the ***Secret Recipe*** in our chatbot that allows it to stay updated with the latest information. The RAG technique is a powerful architecture that combines information retrieval and language generation to produce high-quality responses to text prompts.")
     st.markdown("The retrieval component retrieves relevant documents from a large corpus, such as the latest news articles scraped from the internet or local documents. The augmentation component then augments the input prompt with information from the retrieved documents. Finally, the generation component generates a response based on the augmented input prompt.")
     st.markdown("This technique allows our chatbot to answer questions based on the most recent information we provide, rather than relying solely on a static dataset. This dynamic learning capability makes our chatbot more versatile and effective, enabling it to provide more accurate, up-to-date, and contextually relevant responses.")
 
-with st.expander("F&Q 6: Is there any usage limitation of this app?"):
+with st.expander("FAQ 6: Is there any usage limit of this app?"):
     st.markdown("Yes, there are some limitations to using this app:")
     st.markdown("1. **API Rate Limit**: The app uses the Google Custom Search JSON API to scrape the web for news articles. This API has a daily limit of 100-200 queries per day. Once this limit is reached, the app will be unable to perform any further searches until the next day. Additional requests please contact the developer *(you can get more info to contact us through the build-in menu at top right corner)*.")
     st.markdown("2. **Cloud Provider Pricing**: The chatbot uses the Replicate.ai API to generate responses to user queries. Though we're purely using open-source langugage models like Llama 2 & Mistral, we still need to host them on high-performance computing systems which actuall require cost, priced by the length of questions (as input) and response generated (as output). To know more about the specific pricing, please contact the developer *(you can get more info to contact us through the build-in menu at top right corner)*.")

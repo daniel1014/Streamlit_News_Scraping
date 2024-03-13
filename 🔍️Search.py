@@ -152,7 +152,7 @@ for i in st.session_state['searches']:
         focus = st.selectbox(
             'Which focus would you like to search about?',
             label_visibility="collapsed",
-            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Financial Planning', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Other (Please specify)'),
+            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Asset management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Financial Planning', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Other (Please specify)'),
             index=None,
             placeholder='Select a focus',
             key=f"search_focus_{i}"
@@ -181,11 +181,13 @@ for i in st.session_state['searches']:
 row_last = main_container.columns([1,1,2])
 if row_last[1].button("🔍 Search the web", type="primary"):
     st.session_state['search_trigger']=True
+    st.session_state['search_inputs'] = st.session_state['search_params']
     st.switch_page("pages/01_🧊_Results.py")
 
 # set the style
 general_utils.set_radio_style()
 general_utils.set_primary_button_style("#EC6642")
+general_utils.hide_markdown_anchor_button()
 
 # Footer
 general_utils.add_footer()

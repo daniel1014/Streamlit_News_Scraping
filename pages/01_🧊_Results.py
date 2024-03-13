@@ -34,7 +34,7 @@ def search_google(search_params, date_restrict=None, gl=None):
         supplier_full_name = params['supplier'] 
         if 'Limited' in supplier_full_name:
             supplier_input = supplier_full_name.strip('Limited')
-            supplier_input = ' '.join(supplier_input.split()[:2])
+            supplier_input = ' '.join(supplier_input.split()[:3])
         focus_input = params['focus'] 
         if supplier_input and focus_input:
             query = supplier_input + " " + focus_input 
@@ -110,13 +110,13 @@ if 'search_trigger' not in st.session_state:        # Stop the script if search 
     st.stop() 
 
 st.write("#### Your search queries and results are as follows 👇:")
-df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
+df = pd.DataFrame(st.session_state['search_inputs']).drop(columns=['search_ID'])
 df.index = df.index + 1  # Adjust index to start from 1
 df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
 st.table(df)
 
-if st.session_state.search_params and st.session_state.search_trigger is True:
-    results = search_google(st.session_state.search_params, st.session_state.date_restrict, st.session_state.gl)
+if st.session_state.search_inputs and st.session_state.search_trigger is True:
+    results = search_google(st.session_state.search_inputs, st.session_state.date_restrict, st.session_state.gl)
     st.session_state['all_results'] = extract_scrapped_content(results)
     st.session_state['summary'] = [None] * len(results)  # Initialize summary state
     st.session_state['tab_id'] = None
@@ -155,13 +155,13 @@ if "all_results" in st.session_state:
     st.session_state['tab_id'] = stx.tab_bar(
         data=[
             stx.TabBarItemData(
-                id=st.session_state.search_params[i]['search_ID'], 
-                title=' '.join(st.session_state.search_params[i]['supplier'].split()[:2]) + ' ' + st.session_state.search_params[i]['focus'], 
-                description=f"Display {st.session_state.search_params[i]['num_search']} scrapped News"
+                id=st.session_state.search_inputs[i]['search_ID'], 
+                title=' '.join(st.session_state.search_inputs[i]['supplier'].split()[:2]) + ' ' + st.session_state.search_inputs[i]['focus'], 
+                description=f"Display {st.session_state.search_inputs[i]['num_search']} scrapped News"
             ) 
-            for i in range(len(st.session_state['search_params']))
+            for i in range(len(st.session_state['search_inputs']))
         ], 
-        default=st.session_state.search_params[0]['search_ID']
+        default=st.session_state.search_inputs[0]['search_ID']
     )
 
 # 3.2.2 / Lookup the search ID and display the search results
@@ -201,3 +201,4 @@ if st.session_state['tab_id'] is not None:
 
 # Footer
 general_utils.add_footer()
+general_utils.hide_markdown_anchor_button()

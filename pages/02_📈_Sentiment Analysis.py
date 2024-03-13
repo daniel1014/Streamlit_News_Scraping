@@ -24,7 +24,7 @@ if not st.session_state.get("all_results"):
     st.warning("Please perform a search first.")
     st.stop()
         
-df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
+df = pd.DataFrame(st.session_state['search_inputs']).drop(columns=['search_ID'])
 df.index = df.index + 1  # Adjust index to start from 1
 df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
 st.table(df)

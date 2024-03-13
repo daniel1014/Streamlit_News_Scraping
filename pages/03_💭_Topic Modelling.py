@@ -44,12 +44,14 @@ def preprocess_text(text_ls):
             print(f"Text is not a string: {text}")
     return preprocess_text
 
+st.write("# Topic Modelling")
+
 if not st.session_state.get("all_results"):
     st.warning("Please perform a search first.")
     st.stop()
 
 # display input queries
-df = pd.DataFrame(st.session_state['search_params']).drop(columns=['search_ID'])
+df = pd.DataFrame(st.session_state['search_inputs']).drop(columns=['search_ID'])
 df.index = df.index + 1  # Adjust index to start from 1
 df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier', 'focus' : 'Focus'})  # Rename column
 st.table(df)
@@ -61,13 +63,13 @@ if "tab_id_topic" not in st.session_state:
 st.session_state['tab_id_topic'] = stx.tab_bar(
         data=[
             stx.TabBarItemData(
-                id=st.session_state.search_params[i]['search_ID'], 
-                title=' '.join(st.session_state.search_params[i]['supplier'].split()[:2]) + ' ' + st.session_state.search_params[i]['focus'], 
-                description=f"Display {st.session_state.search_params[i]['num_search']} scrapped News"
+                id=st.session_state.search_inputs[i]['search_ID'], 
+                title=' '.join(st.session_state.search_inputs[i]['supplier'].split()[:2]) + ' ' + st.session_state.search_inputs[i]['focus'], 
+                description=f"Display {st.session_state.search_inputs[i]['num_search']} scrapped News"
             ) 
-            for i in range(len(st.session_state['search_params']))
+            for i in range(len(st.session_state['search_inputs']))
         ], 
-        default=st.session_state.search_params[0]['search_ID']
+        default=st.session_state.search_inputs[0]['search_ID']
     )
 
 # Creating visualization for the LDA model, refactored from https://neptune.ai/blog/pyldavis-topic-modelling-exploration-tool-that-every-nlp-data-scientist-should-know
