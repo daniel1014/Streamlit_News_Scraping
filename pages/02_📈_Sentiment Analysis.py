@@ -30,22 +30,23 @@ df = df.rename(columns={'num_search': 'Search Results', 'supplier' : 'Supplier',
 st.table(df)
 
 # Create a sentiment analysis pipeline
-nlp = pipeline('sentiment-analysis', model="distilbert-base-uncased-finetuned-sst-2-english")
+# nlp = pipeline('sentiment-analysis', model="distilbert-base-uncased-finetuned-sst-2-english")
 
-model_selection = st.radio("Select a model", ["TextBlob", "Hugging Face"], captions = ["TextBlob", "Hugging Face"], horizontal=True) 
+# model_selection = st.radio("Select a model", ["TextBlob", "Hugging Face"], captions = ["TextBlob", "Hugging Face"], horizontal=True) 
 
 def perform_sentiment_analysis():
     sentiment_input = build_sentiment_input()
     sentiment_result, df_polarity = analyze_sentiment(sentiment_input)
     df_sentiment_result = pd.DataFrame(sentiment_result).T
     display_charts(df_sentiment_result, df_polarity)
+    # st.write(df_polarity)
 
 def build_sentiment_input():
     sentiment_input = {}
     for row in st.session_state["all_results"]:
         key = f"{row['supplier']} {row['focus']}"
         text = row.get('scrapped_text', row['snippet'])
-        sentiment_input.setdefault(key, []).append({row['title']: text})
+        sentiment_input.setdefault(key, []).append({'title': row['title'], 'text': text, 'date': row['date']})
     return sentiment_input
 
 def analyze_sentiment(sentiment_input):
@@ -53,16 +54,15 @@ def analyze_sentiment(sentiment_input):
     polarity_data = []
     for company_focus, all_news in sentiment_input.items():
         sentiment_result[company_focus] = {'positive': 0, 'neutral': 0, 'negative': 0}
+        news_number = 1
         for news in all_news:
-            for title, text in news.items():
-                if model_selection == "TextBlob":
-                    polarity = TextBlob(f"{title} {text}").sentiment.polarity
-                elif model_selection == "Hugging Face":
-                    result = nlp(f"{title} {text}"[:512])
-                    print(result)
-                    polarity = result[0]['score'] if result[0]['label'] == 'POSITIVE' else -result[0]['score']
-                polarity_data.append({'supplier_focus': company_focus, 'title' : title, 'polarity': polarity})
-                sentiment_result[company_focus][categorize_sentiment(polarity)] += 1
+            title = news['title']
+            text = news['text']
+            date = news['date']
+            polarity = TextBlob(f"{title} {text}").sentiment.polarity
+            polarity_data.append({'supplier_focus': company_focus, 'news_title' : title, 'polarity': polarity, 'news_number': news_number, 'date': date})
+            sentiment_result[company_focus][categorize_sentiment(polarity)] += 1
+            news_number += 1
     df_polarity = pd.DataFrame(polarity_data)
     return sentiment_result, df_polarity
 
@@ -81,22 +81,22 @@ def display_charts(df_sentiment_result, df_polarity):
 
 def display_bar_chart(df_long):
     chart = alt.Chart(df_long).mark_bar().encode(
-        x=alt.X('value:Q', scale=alt.Scale(nice=False)),
-        y='index:N',
-        color=alt.Color('variable:N', scale=alt.Scale(domain=['positive', 'neutral', 'negative'], range=['#AECC53', '#DAD8CC', '#C70C6F'])),
+        x=alt.X('value:Q', title='Number of News Articles', axis=alt.Axis(format='d')),
+        y=alt.Y('index:N', title='Supplier & Focus'),
+        color=alt.Color('variable:N', title='Sentiment', scale=alt.Scale(domain=['positive', 'neutral', 'negative'], range=['#AECC53', '#DAD8CC', '#C70C6F'])),
         tooltip=['index:N', 'variable:N', 'value:Q']
-    ).properties(title='Sentiment Analysis Results')
-    st.altair_chart(chart, use_container_width=True)
+    ).properties(title='A high-level overview of sentiment analysis results')
+    st.altair_chart(chart, use_container_width=True, theme=None)
  
 def display_scatter_chart(df_polarity):
-    df_polarity = df_polarity.reset_index().rename(columns={'index': 'index_col'})
-    chart = alt.Chart(df_polarity).mark_circle().encode(
-        x='index_col',
-        y='polarity',
-        color='supplier_focus',
-        tooltip=['title', 'polarity']
-    ).properties(title='Polarity of News Articles')
-    st.altair_chart(chart, use_container_width=True)
+    df_polarity = df_polarity.reset_index().rename(columns={'news_number': 'Number of News Articles','polarity':'Sentiment Score', 'supplier_focus': 'Supplier & focus', 'news_title': 'News Title'})
+    chart = alt.Chart(df_polarity).mark_point(size=100).encode(
+        x=alt.X('Number of News Articles', scale=alt.Scale(domain=(1, df_polarity['Number of News Articles'].max())), axis=alt.Axis(format='d')),
+        y='Sentiment Score',
+        color=alt.Color('Supplier & focus', scale=alt.Scale(range=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])),
+        tooltip=['News Title', 'Supplier & focus', 'date', 'Sentiment Score']
+    ).properties(title='Sentiment Distribution of News Articles')
+    st.altair_chart(chart, use_container_width=True, theme=None)
 
 perform_sentiment_analysis()
 

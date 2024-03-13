@@ -198,7 +198,8 @@ if st.session_state['tab_id'] is not None:
                 tile.write(f"Snippet: {st.session_state['all_results'][result_index]['snippet']}")
                 tile.write(f"URL: {st.session_state['all_results'][result_index]['URL']}")
                 
-
 # Footer
 general_utils.add_footer()
 general_utils.hide_markdown_anchor_button()
+
+# st.session_state
