@@ -32,6 +32,7 @@ def search_google(search_params, date_restrict=None, gl=None):
         search_ID = params['search_ID']
         num_search = params['num_search']
         supplier_full_name = params['supplier'] 
+        supplier_input = supplier_full_name
         if 'Limited' in supplier_full_name:
             supplier_input = supplier_full_name.strip('Limited')
             supplier_input = ' '.join(supplier_input.split()[:3])
@@ -130,12 +131,12 @@ def load_summarizer():
     """Load the BART summarization model from Hugging Face, which is pre-trained on English language and fine-tuned on CNN Daily Mail."""
     return pipeline("summarization", model="facebook/bart-large-cnn")
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def summarize_content(text: str): 
     """Summarize the input text using the BART model."""
     summarizer = load_summarizer()
     # Truncate the text to the maximum input length of the model
-    text = text[:2500]
+    text = text[:1024]
     summary = summarizer(text, max_length=100, min_length=50, do_sample=False)
     return summary[0]['summary_text']
 
@@ -182,9 +183,9 @@ if st.session_state['tab_id'] is not None:
                 row_ = con_.columns([2, 0.3])
                 if row_[0].button("✨Generate Summary", key=f"summary_button_{result_index}", help="Click to generate summary"):
                     if st.session_state['all_results'][result_index].get('scrapped_text'):
-                        # with st.spinner(f"Summarizing content..."):
-                        summary_text = summarize_content(st.session_state['all_results'][result_index]['scrapped_text'])
-                        st.session_state['summary'][result_index] = summary_text
+                        with st.spinner("Generating summary..."):
+                            summary_text = summarize_content(st.session_state['all_results'][result_index]['scrapped_text'])
+                            st.session_state['summary'][result_index] = summary_text
                     else:
                         tile.error("Failed to retrieve the main content from the URL. It may be due to firewall restrictions or the website's response to the GET request. Please try again later.")
                 if st.session_state['summary'][result_index] is not None:
@@ -202,4 +203,4 @@ if st.session_state['tab_id'] is not None:
 general_utils.add_footer()
 general_utils.hide_markdown_anchor_button()
 
-# st.session_state
+st.session_state

@@ -152,7 +152,7 @@ for i in st.session_state['searches']:
         focus = st.selectbox(
             'Which focus would you like to search about?',
             label_visibility="collapsed",
-            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Asset management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Financial Planning', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Other (Please specify)'),
+            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Financial Stability', 'Asset management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Subsidiaries', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Health & Safety', 'Other (Please specify)'),
             index=None,
             placeholder='Select a focus',
             key=f"search_focus_{i}"
@@ -171,7 +171,10 @@ for i in st.session_state['searches']:
 st.session_state['search_params'] = []
 for i in st.session_state['searches']:
     supplier = st.session_state[f"search_supplier_{i}"]["result"] or ""
-    focus = st.session_state[f"search_focus_{i}"] or ""
+    if st.session_state[f"search_focus_{i}"] == 'Other (Please specify)':
+        focus = st.session_state[f"search_focus_other_{i}"] or ""
+    else:
+        focus = st.session_state[f"search_focus_{i}"] or ""
     num_search = st.session_state[f"search_num_{i}"]
     st.session_state["search_params"].append({'search_ID': i, 'supplier': supplier, 'focus': focus, 'num_search': num_search})
 
@@ -186,8 +189,13 @@ if row_last[1].button("🔍 Search the web", type="primary"):
 
 # set the style
 general_utils.set_radio_style()
-general_utils.set_primary_button_style("#EC6642")
 general_utils.hide_markdown_anchor_button()
+
+# change the style of main search button
+general_utils.set_primary_button_style("#EC6642")
+
+# change font color of subtitle when selecting "Other (Please specify)" in Focus
+general_utils.set_text_input_style()        
 
 # Footer
 general_utils.add_footer()

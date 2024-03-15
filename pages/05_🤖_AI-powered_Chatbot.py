@@ -28,16 +28,18 @@ if "all_results" not in st.session_state or st.session_state.all_results == None
     st.stop()  
 
 # Initialize the LLM model
-def initialize_llm(model, temperature=0.1):
+def initialize_llm(model, max_new_tokens):
     """
     Initialize the LLM model
     """
     llm = Replicate(
         model=model,
-        temperature=temperature,
+        temperature=0.1,
         # Experimenting - control the spec of Replicate API. 
         # max_new_tokens is set to 512 to extend the generated response. Repetition penalty is set to 1 to disable repetitive responses. 
-        additional_kwargs = {"max_new_tokens": 512, "repetition_penalty":1},
+        additional_kwargs = {"max_new_tokens": max_new_tokens, "repetition_penalty":1, 
+                             "system_prompt": "You are a helpful, respectful and honest assistant. Please always use multiple sources to answer question if they are relevant. Also, please provide your answer along with reference and date."
+                             },
         # override max tokens since it's interpreted as context window instead of max tokens
         # context_window=context_window,
         # messages_to_prompt=messages_to_prompt,
@@ -45,15 +47,15 @@ def initialize_llm(model, temperature=0.1):
     Settings.llm = llm
     Settings.embed_model = HuggingFaceEmbedding(
         model_name="BAAI/bge-small-en-v1.5")
-    # Settings.chunk_size = 512
+    # Settings.chunk_size = 1024
     return llm
 
 ## The script below is refactored from https://blog.streamlit.io/how-to-build-a-llama-2-chatbot/#3-build-the-app
 # Replicate Credentials
 with st.sidebar:
-    st.title('🦙💬 Chatbot')
+    st.title('🤖 AI-powered Chatbot')
     if 'REPLICATE_API_TOKEN' in config:
-        st.success('API key already provided!', icon='✅')
+        # st.success('API key already provided!', icon='✅')
         replicate_api = config['REPLICATE_API_TOKEN']
         os.environ["REPLICATE_API_TOKEN"] = replicate_api
     elif 'REPLICATE_API_TOKEN' in st.secrets:
@@ -66,35 +68,36 @@ with st.sidebar:
             st.warning('Please enter your credentials!', icon='⚠️')
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
+    tab1, tab2 = st.tabs(["Basic", "Advanced"])
     # activate = st.toggle("Activate: Feed Data into LLM",
     #         help="""Activate this feature to load the documents from scrapped articles into the LLM model, 
     #         empowered by Retrieval Augmentation Generation (RAG) architecture with Llama_Index library.""")
-    st.subheader('Model selection')
-    selected_model = st.radio('Select a conversation style', ['Creative', 'Precise'], key='selected_model', help="Llama 2 offers an innovative conversation style, weaving creativity into its responses, while Mistral focuses on precision, delivering accurate and well-researched information.")
-    if selected_model == 'Creative':
-        # model = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'    # withdrawn as slow to response
-        model = "meta/llama-2-7b-chat"
-    elif selected_model == 'Precise':
-        # model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
-        model = "mistralai/mistral-7b-instruct-v0.2"
-    # temperature = st.slider('temperature', min_value=0.01, max_value=5.0, value=0.1, step=0.1, help="The higher the temperature, the more random the output.")
-    # context_window = st.sidebar.slider('context_window', min_value=4000, max_value=int(st.session_state["loaded_tokens"]*2.5), value=int(st.session_state["loaded_tokens"]), step=2000, help="The maximum number of tokens from the input that the model will consider. Simply say one single word can equal to 1-3 tokens. Higher token can provide a more comprehensive context for the model, but potentially lead to slower response (as the model would need to handle more context).")
+    with tab1:
+        st.subheader('Model selection')
+        selected_model = st.radio('Select a conversation style', ['Creative', 'Precise'], key='selected_model', help="Llama 2 offers an innovative conversation style, weaving creativity into its responses, while Mistral focuses on precision, delivering accurate and well-researched information.")
+        if selected_model == 'Creative':
+            # model = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'    # withdrawn as slow to response
+            model = "meta/llama-2-7b-chat"
+        elif selected_model == 'Precise':
+            # model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
+            model = "mistralai/mistral-7b-instruct-v0.2"
+    with tab2:
+        st.subheader('Advanced settings')
+        max_new_tokens = st.slider('max_new_tokens', min_value=300, max_value=2048, value=512, step=10, help="The maximum number of tokens that the model will generate in response to the input.")
+        # temperature = st.slider('temperature', min_value=0.01, max_value=5.0, value=0.1, step=0.1, help="The higher the temperature, the more random the output.")
+        # context_window = st.sidebar.slider('context_window', min_value=4000, max_value=int(st.session_state["loaded_tokens"]*2.5), value=int(st.session_state["loaded_tokens"]), step=2000, help="The maximum number of tokens from the input that the model will consider. Simply say one single word can equal to 1-3 tokens. Higher token can provide a more comprehensive context for the model, but potentially lead to slower response (as the model would need to handle more context).")
 
 # Call the initialize_llm function whenever the selected model, temperature, or context window changes
-llm = initialize_llm(model)
+llm = initialize_llm(model, max_new_tokens)
 # st.session_state
 
 @st.cache_resource(show_spinner=False)
-def load_data(all_results, model=selected_model):
+def load_data(all_results, selected_model):
     """
     Load the data from the search results and create a VectorStoreIndex.
     the model parameter is used to determine whether to run this function again when the spec is changed.
     """
     with st.spinner(text="Loading and indexing the news articles that you just scrapped – hang tight! This should take 10 seconds to 1 minute."):
-        # # indicate that the data is being loaded
-        # if st.session_state.messages[-1]["content"] != f"Hi I am {selected_model} Chatbot! Please ask me any question about your scrapped news articles.":
-        #     st.session_state.messages.append({"role": "assistant", "content": f"Hi I am {selected_model} Chatbot! Please ask me any question about your scrapped news articles."})
-        # Load the data
         st.session_state["loaded_tokens"] = sum(len(all_results[i].get('scrapped_text').split()) for i in range(len(all_results)) if all_results[i].get('scrapped_text') != "Failed to scrape the article content...")
         documents = [Document(text=all_results[i].get('scrapped_text'), 
                               metadata={'supplier' : all_results[i].get('supplier'), 'focus': all_results[i].get('focus'),
@@ -107,9 +110,12 @@ def load_data(all_results, model=selected_model):
 
 # Load Data 
 all_results = st.session_state.all_results
-query_engine = load_data(all_results)
-st.info(f"*Loaded {st.session_state['loaded_tokens']} words from {len(st.session_state.all_results)} articles*", icon="ℹ️")
-    
+if selected_model == 'Creative':
+    query_engine_llama2 = load_data(all_results, selected_model)
+elif selected_model == 'Precise':
+    query_engine_mistral = load_data(all_results, selected_model)
+data_sources = {search['supplier']+" "+search['focus'] for search in st.session_state.search_inputs}
+st.info(f"*Loaded {st.session_state['loaded_tokens']} words from {len(st.session_state.all_results)} articles, including {data_sources}*", icon="ℹ️")
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
@@ -148,7 +154,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
             #     for r in response:
             #         full_response += str(r.delta)
             #         placeholder.markdown(full_response)
-            response = query_engine.query(prompt)
+            if selected_model == 'Creative':
+                response = query_engine_llama2.query(prompt)
+            elif selected_model == 'Precise':
+                response = query_engine_mistral.query(prompt)
             placeholder = st.empty()
             full_response = ''
             for token in response.response_gen:

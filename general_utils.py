@@ -114,6 +114,18 @@ def set_selectbox_style():
         unsafe_allow_html=True,
     )
 
+def set_text_input_style():
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stTextInput"] > label > div > p {
+        color: white;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 def hide_markdown_anchor_button():
     st.markdown("""
     <style>
