@@ -34,7 +34,7 @@ def initialize_llm(model, max_new_tokens):
     """
     llm = Replicate(
         model=model,
-        temperature=0.1,        # Experimenting - higher temperature turns into faster response, but less details in the response 
+        temperature=0.5,        # Experimenting - higher temperature turns into faster response, but less details in the response 
         # Experimenting - control the spec of Replicate API. 
         # max_new_tokens is set to customizable to extend the generated response. Repetition penalty is set to 1 to disable repetitive responses. 
         # system prompt seems not working in both models   
@@ -80,8 +80,8 @@ with st.sidebar:
             # model = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'    # withdrawn as slow to response
             model = "meta/llama-2-7b-chat"
         elif selected_model == 'Precise':
-            # model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
-            model = "mistralai/mistral-7b-instruct-v0.2"
+            model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
+            # model = "mistralai/mistral-7b-instruct-v0.2"
     with tab2:
         st.subheader('Advanced settings')
         max_new_tokens = st.slider('Maximum words to generate', min_value=300, max_value=1024, value=512, step=10, help="The maximum number of words(tokens) that the model will generate in response to the input.")
@@ -110,12 +110,11 @@ def load_data(all_results, selected_model):
         return query_engine  
 
 # Load Data 
-st.session_state.loaded_tokens = 0      # initialize the loaded_tokens in case if load_data function is not called
-all_results = st.session_state.all_results
+st.session_state.loaded_tokens = 0 if 'loaded_tokens' not in st.session_state else st.session_state.loaded_tokens       # initialize the loaded_tokens in case if load_data function is not called
 if selected_model == 'Creative':
-    query_engine_llama2 = load_data(all_results, selected_model)
+    query_engine_llama2 = load_data(st.session_state.all_results, selected_model)
 elif selected_model == 'Precise':
-    query_engine_mistral = load_data(all_results, selected_model)
+    query_engine_mistral = load_data(st.session_state.all_results, selected_model)
 data_sources = {search['supplier']+" "+search['focus'] for search in st.session_state.search_inputs}
 st.info(f"*Loaded {st.session_state['loaded_tokens']} words from {len(st.session_state.all_results)} articles, including {data_sources}*", icon="ℹ️")
 

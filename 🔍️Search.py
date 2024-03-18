@@ -152,7 +152,7 @@ for i in st.session_state['searches']:
         focus = st.selectbox(
             'Which focus would you like to search about?',
             label_visibility="collapsed",
-            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Financial Stability', 'Asset management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Subsidiaries', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Health & Safety', 'Other (Please specify)'),
+            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Financial Stability', 'Contract Management', 'Asset Management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Subsidiaries', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Health & Safety', 'Other (Please specify)'),
             index=None,
             placeholder='Select a focus',
             key=f"search_focus_{i}"
