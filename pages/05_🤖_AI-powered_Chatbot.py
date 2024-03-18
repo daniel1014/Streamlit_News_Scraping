@@ -34,14 +34,15 @@ def initialize_llm(model, max_new_tokens):
     """
     llm = Replicate(
         model=model,
-        temperature=0.1,
+        temperature=0.1,        # Experimenting - higher temperature turns into faster response, but less details in the response 
         # Experimenting - control the spec of Replicate API. 
-        # max_new_tokens is set to 512 to extend the generated response. Repetition penalty is set to 1 to disable repetitive responses. 
+        # max_new_tokens is set to customizable to extend the generated response. Repetition penalty is set to 1 to disable repetitive responses. 
+        # system prompt seems not working in both models   
         additional_kwargs = {"max_new_tokens": max_new_tokens, "repetition_penalty":1, 
                              "system_prompt": "You are a helpful, respectful and honest assistant. Please always use multiple sources to answer question if they are relevant. Also, please provide your answer along with reference and date."
                              },
         # override max tokens since it's interpreted as context window instead of max tokens
-        # context_window=context_window,
+        # context_window=context_window, 
         # messages_to_prompt=messages_to_prompt,
     )
     Settings.llm = llm
@@ -83,7 +84,7 @@ with st.sidebar:
             model = "mistralai/mistral-7b-instruct-v0.2"
     with tab2:
         st.subheader('Advanced settings')
-        max_new_tokens = st.slider('max_new_tokens', min_value=300, max_value=2048, value=512, step=10, help="The maximum number of tokens that the model will generate in response to the input.")
+        max_new_tokens = st.slider('Maximum words to generate', min_value=300, max_value=1024, value=512, step=10, help="The maximum number of words(tokens) that the model will generate in response to the input.")
         # temperature = st.slider('temperature', min_value=0.01, max_value=5.0, value=0.1, step=0.1, help="The higher the temperature, the more random the output.")
         # context_window = st.sidebar.slider('context_window', min_value=4000, max_value=int(st.session_state["loaded_tokens"]*2.5), value=int(st.session_state["loaded_tokens"]), step=2000, help="The maximum number of tokens from the input that the model will consider. Simply say one single word can equal to 1-3 tokens. Higher token can provide a more comprehensive context for the model, but potentially lead to slower response (as the model would need to handle more context).")
 
@@ -109,6 +110,7 @@ def load_data(all_results, selected_model):
         return query_engine  
 
 # Load Data 
+st.session_state.loaded_tokens = 0      # initialize the loaded_tokens in case if load_data function is not called
 all_results = st.session_state.all_results
 if selected_model == 'Creative':
     query_engine_llama2 = load_data(all_results, selected_model)
