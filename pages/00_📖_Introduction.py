@@ -34,15 +34,15 @@ st.subheader("Key Features")
 col1, col2, col3 = st.columns(3, gap="large")
 with col1.container(height=165):
     st.markdown("<h4 style='text-align:left; color: black;'>🔍️ Intelligent News Scraping</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:left; color: black;'> Our app uses advanced algorithms and customized Google Search Engine to scrape the web for the latest news and trends.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:left; color: black;'><strong> Our app uses advanced algorithms and customized Google Search Engine to scrape the web for the latest news and trends.</p>", unsafe_allow_html=True)
 
 with col2.container(height=165):
     st.markdown("<h4 style='text-align:left; color: black;'>📈 Advanced Analysis</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:left; color: black;'> Get insights and trends from the news with our AI-powered sentiment analysis and topic modelling visualization.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:left; color: black;'><strong> Get insights and trends from the news with our AI-powered sentiment analysis and topic modelling visualization.</p>", unsafe_allow_html=True)
 
 with col3.container(height=165):
     st.markdown("<h4 style='text-align:left; color: black;'>💬 AI-powered Chatbot</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:left; color: black;'> Ask any question about the news with our conversational AI chatbot, powered by the latest LLM technology.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:left; color: black;'><strong> Ask any question about the news with our conversational AI chatbot, powered by the latest LLM technology.</p>", unsafe_allow_html=True)
 
 st.subheader("Comparison with OpenAI's ChatGPT")
 row_2 =st.columns([1,3,3,1], gap="small")

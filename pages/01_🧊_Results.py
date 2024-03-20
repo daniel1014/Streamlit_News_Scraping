@@ -76,8 +76,13 @@ def extract_scrapped_content(all_results):
         st.toast("Scraping News Websites...", icon='⏳')
         count=0
         for i in range(len(all_results)):
+            url = all_results[i]['URL']
+            if url.endswith('.pdf'):
+                st.toast(f"Skipping PDF file - {i+1}.", icon='⚠️')
+                all_results[i]['scrapped_text'] = "Failed to scrape the article content..."
+                continue
             try:
-                response = requests.get(all_results[i]['URL'], headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, Like Gecko) Chrome/79.0.3945.88 Safari/537.36'}, timeout=4)
+                response = requests.get(url, verify=False, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, Like Gecko) Chrome/79.0.3945.88 Safari/537.36'}, timeout=4)
                 if response.status_code == 200:
                     # Instantiate the extractor
                     extractor = extractors.ArticleExtractor()
@@ -92,12 +97,12 @@ def extract_scrapped_content(all_results):
                     st.toast(f"Scrapped News No.{i+1} Successfully! News Title: {all_results[i]['title']}", icon='🔥')
                 else:
                     all_results[i]['scrapped_text'] = "Failed to scrape the article content..."
-                    st.toast(f"Failed to retrieve the News website - {i+1}. Response status code: {response.status_code}")
-                    st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']}. Response status code: {response.status_code}")
+                    st.toast(f"Failed to retrieve the News website - {i+1}. Response status code: {response.status_code}", icon="⚠️")
+                    st.sidebar.write(f"Failed to retrieve the News {i+1}: {url}. Response status code: {response.status_code}")
             except requests.exceptions.RequestException as e:
                 all_results[i]['scrapped_text'] = "Failed to scrape the article content..."
-                st.toast(f"Failed to retrieve {all_results[i]['URL']} due to timeout")
-                st.sidebar.write(f"Failed to retrieve the News {i+1}: {all_results[i]['URL']} due to timeout")
+                st.toast(f"Failed to retrieve {url} due to timeout", icon="⚠️")
+                st.sidebar.write(f"Failed to retrieve the News {i+1}: {url} due to timeout")
             
         st.toast(f"News Scraping Completed. Retrieved {count}/{len(all_results)} websites successfully", icon='🎉')
         st.sidebar.write(f"Retrieved {count}/{len(all_results)} websites successfully")
@@ -143,9 +148,10 @@ def summarize_content(text: str):
 def perform_sentiment_analysis(text: str):
     """Perform sentiment analysis on the input text."""
     polarity = TextBlob(text).sentiment.polarity
+    # print(polarity)
     if polarity > 0.1:
         return ":blush:"
-    elif polarity < 0.02:
+    elif polarity < 0.0:
         return ":worried:"
     else:
         return ":neutral_face:"
@@ -182,7 +188,8 @@ if st.session_state['tab_id'] is not None:
                 con_ = tile.container()
                 row_ = con_.columns([2, 0.3])
                 if row_[0].button("✨Generate Summary", key=f"summary_button_{result_index}", help="Click to generate summary"):
-                    if st.session_state['all_results'][result_index].get('scrapped_text'):
+                    if (st.session_state['all_results'][result_index].get('scrapped_text') and 
+                    st.session_state['all_results'][result_index]['scrapped_text'] != "Failed to scrape the article content..."):
                         with st.spinner("Generating summary..."):
                             summary_text = summarize_content(st.session_state['all_results'][result_index]['scrapped_text'])
                             st.session_state['summary'][result_index] = summary_text
@@ -193,7 +200,7 @@ if st.session_state['tab_id'] is not None:
                 # Perform sentiment analysis to display smiley or sad face
                 row_[1].subheader(perform_sentiment_analysis(st.session_state['all_results'][result_index]['scrapped_text'] 
                                                              if st.session_state['all_results'][result_index].get('scrapped_text') not in ["", "Failed to scrape the article content..."] 
-                                                             else st.session_state['all_results'][result_index].get('snippet')))
+                                                             else st.session_state['all_results'][result_index].get('title')))
                 tile.write(f"Title: {st.session_state['all_results'][result_index]['title']}")
                 tile.write(f"Date: {st.session_state['all_results'][result_index]['date']}")
                 tile.write(f"Snippet: {st.session_state['all_results'][result_index]['snippet']}")

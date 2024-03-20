@@ -159,12 +159,13 @@ if st.session_state.messages[-1]["role"] != "assistant":
                 response = query_engine_llama2.query(prompt)
             elif selected_model == 'Precise':
                 response = query_engine_mistral.query(prompt)
+            # st.write(response.response_txt)
             placeholder = st.empty()
             full_response = ''
-            for token in response.response_gen:
+            for token in response.response_txt:         # changed from .response_gen to .response_txt, otherwise no results returned
                 full_response += str(token)
                 placeholder.markdown(full_response)
-            message = {"role": "assistant", "content": full_response}
+            message = {"role": "assistant", "content": full_response}       # you can change full_response to response to check the API details     
             st.session_state.messages.append(message) # Add response to message history
 
 # Footer

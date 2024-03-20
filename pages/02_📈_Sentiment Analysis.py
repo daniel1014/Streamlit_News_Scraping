@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from transformers import pipeline
 import altair as alt
 from textblob import TextBlob
 import general_utils
