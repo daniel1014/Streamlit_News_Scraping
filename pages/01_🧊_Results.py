@@ -89,8 +89,11 @@ def extract_scrapped_content(all_results):
                     # Extract the main content
                     try:
                         content = extractor.get_content(response.text)
-                    except:
-                        st.toast(f"Failed to scrape the article content - {i+1}. Please check if it's a PDF rather than a web.", icon='⚠️')
+                    except AttributeError:
+                        st.toast(f"Failed to scrape the article content - {i+1}. The webpage might not have a properly formatted title tag.", icon='⚠️')
+                        content = "Failed to scrape the article content..."
+                    except Exception as e:      # This will catch all other exceptions
+                        st.toast(f"Failed to scrape the article content - {i+1}. Error: {e}", icon='⚠️')
                         content = "Failed to scrape the article content..."
                     all_results[i]['scrapped_text'] = content
                     count+=1
