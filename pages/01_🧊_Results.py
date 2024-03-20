@@ -78,8 +78,9 @@ def extract_scrapped_content(all_results):
         for i in range(len(all_results)):
             url = all_results[i]['URL']
             if url.endswith('.pdf'):
-                st.toast(f"Skipping PDF file - {i+1}.", icon='⚠️')
                 all_results[i]['scrapped_text'] = "Failed to scrape the article content..."
+                st.toast(f"Skipping PDF file - {i+1}.", icon='⚠️')
+                st.sidebar.write(f"Skipping PDF file - {i+1}: {url}")
                 continue
             try:
                 response = requests.get(url, verify=False, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, Like Gecko) Chrome/79.0.3945.88 Safari/537.36'}, timeout=4)
@@ -91,9 +92,11 @@ def extract_scrapped_content(all_results):
                         content = extractor.get_content(response.text)
                     except AttributeError:
                         st.toast(f"Failed to scrape the article content - {i+1}. The webpage might not have a properly formatted title tag.", icon='⚠️')
+                        st.sidebar.write(f"Failed to scrape the article content - {i+1}. The webpage might not have a properly formatted title tag.")
                         content = "Failed to scrape the article content..."
                     except Exception as e:      # This will catch all other exceptions
                         st.toast(f"Failed to scrape the article content - {i+1}. Error: {e}", icon='⚠️')
+                        st.sidebar.write(f"Failed to scrape the article content - {i+1}. Error: {e}")
                         content = "Failed to scrape the article content..."
                     all_results[i]['scrapped_text'] = content
                     count+=1
