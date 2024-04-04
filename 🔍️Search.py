@@ -10,18 +10,13 @@ import datetime
 st.set_page_config(
     page_title="News Scraping",
     page_icon="assets/page_icon.png",
-    menu_items={
-        'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
-        'Report a bug': "mailto:Daniel.Wong3@aecom.com",
-        'About': "# This is a *News Scraping Analytics* app!"
-    },
     initial_sidebar_state="collapsed",
     layout="centered",
     # layout="wide"
 )
 
 # Setup branding logo and customized background
-general_utils.add_logo()
+general_utils.add_logo("assets/logo.png")
 general_utils.set_page_background_local("assets/background.png")
 
 for x in range(4):

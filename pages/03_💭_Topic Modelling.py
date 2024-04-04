@@ -14,14 +14,9 @@ import general_utils
 st.set_page_config(
     page_title="News Scraping",
     page_icon="assets/page_icon.png",
-    menu_items={
-        'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
-        'Report a bug': "mailto:Daniel.Wong3@aecom.com",
-        'About': "# This is a *News Scraping Analytics* app!"
-    },
     layout="wide",
 )
-general_utils.add_logo()
+general_utils.add_logo("assets/logo.png")
 
 nltk.download('stopwords')
 nltk.download('punkt')

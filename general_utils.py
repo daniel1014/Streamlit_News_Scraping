@@ -1,17 +1,20 @@
 import streamlit as st
 import base64
 
-def add_logo():
+def add_logo(img_path: str):
+    with open(img_path, "rb") as img_file:
+        b64_string = base64.b64encode(img_file.read()).decode()
+
     st.markdown(
-        """
+        f"""
         <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/AECOM_logo.svg/2560px-AECOM_logo.svg.png);
+            [data-testid="stSidebarNav"] {{
+                background-image: url("data:image/png;base64,{b64_string}");
                 background-repeat: no-repeat;
                 padding-top: 15px;
                 background-position: 20px 20px;
                 background-size: 200px;
-            }
+            }}
         </style>
         """,
         unsafe_allow_html=True,

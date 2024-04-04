@@ -14,13 +14,8 @@ st.set_page_config(
     page_title="News Scraping",
     page_icon="assets/page_icon.png",
     layout="wide",
-    menu_items={
-        'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
-        'Report a bug': "mailto:Daniel.Wong3@aecom.com",
-        'About': "# This is a *News Scraping Analytics* app!"
-    }
 )
-general_utils.add_logo()
+general_utils.add_logo("assets/logo.png")
 
 # 2 / News Search 
 # 2.1 / Google Search Setup

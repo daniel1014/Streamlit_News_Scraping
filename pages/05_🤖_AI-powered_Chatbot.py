@@ -12,16 +12,11 @@ st.set_page_config(
     page_title="News Scraping",
     page_icon="assets/page_icon.png",
     # layout='wide', 
-    menu_items={
-    'Get Help': 'https://aecom.sharepoint.com/sites/HS2-LandPropertyDigitisation-ResearchIntelligence/',
-    'Report a bug': "mailto:Daniel.Wong3@aecom.com",
-    'About': "# This is a *News Scraping Analytics* app!"
-    },
 )
 
 config = dotenv_values(".env")
 
-general_utils.add_logo()
+general_utils.add_logo("assets/logo.png")
 
 if "all_results" not in st.session_state or st.session_state.all_results == None:
     st.warning("Please perform a search first.")
@@ -39,7 +34,7 @@ def initialize_llm(model, max_new_tokens):
         # max_new_tokens is set to customizable to extend the generated response. Repetition penalty is set to 1 to disable repetitive responses. 
         # system prompt seems not working in both models   
         additional_kwargs = {"max_new_tokens": max_new_tokens, "repetition_penalty":1, 
-                             "system_prompt": "You are a helpful, respectful and honest assistant. Please always use multiple sources to answer question if they are relevant. Also, please provide your answer along with reference and date."
+                             "system_prompt": "You are a helpful, respectful and honest assistant. Please always provide your answer along with reference and date and try to use as many sources as possible to answer the query."
                              },
         # override max tokens since it's interpreted as context window instead of max tokens
         # context_window=context_window, 
@@ -80,8 +75,8 @@ with st.sidebar:
             # model = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'    # withdrawn as slow to response
             model = "meta/llama-2-7b-chat"
         elif selected_model == 'Precise':
-            model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
-            # model = "mistralai/mistral-7b-instruct-v0.2"
+            # model = 'mistralai/mistral-7b-instruct-v0.2:f5701ad84de5715051cb99d550539719f8a7fbcf65e0e62a3d1eb3f94720764e'    # withdrawn as slow to response
+            model = "mistralai/mistral-7b-instruct-v0.2"
     with tab2:
         st.subheader('Advanced settings')
         max_new_tokens = st.slider('Maximum words to generate', min_value=300, max_value=1024, value=512, step=10, help="The maximum number of words(tokens) that the model will generate in response to the input.")
