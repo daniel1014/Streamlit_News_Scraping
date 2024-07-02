@@ -3,8 +3,8 @@ from dotenv import dotenv_values
 import uuid
 import hnswlib
 from typing import List, Dict
-# from sentence_transformers import SentenceTransformer
-from gpt4all import Embed4All
+from sentence_transformers import SentenceTransformer
+# from gpt4all import Embed4All
 
 config = dotenv_values(".env")
 cohere_api = config['COHERE_API_KEY']
@@ -64,8 +64,8 @@ class Vectorstore:
         """
         print("Embedding document chunks...")
 
-        # self.docs_len = len(self.docs)
-        # print(f"Total document chunks: {self.docs_len}")
+        self.docs_len = len(self.docs)
+        print(f"Total document chunks: {self.docs_len}")
         # batch_size = 90
         # for i in range(0, self.docs_len, batch_size):
         #     batch = self.docs[i : min(i + batch_size, self.docs_len)]
@@ -75,14 +75,23 @@ class Vectorstore:
         #     ).embeddings
         #     self.docs_embs.extend(docs_embs_batch)
         #     print(f"Embedding {len(docs_embs_batch)} document chunks.")
-        embedder = Embed4All()
-        self.tokens_processed = 0
+
+        # embedder = Embed4All()
+        # self.tokens_processed = 0
+        # for doc in self.docs:
+        #     output = embedder.embed([doc['text']], long_text_mode="mean", return_dict=True)
+        #     self.docs_embs.extend(output["embeddings"])
+        #     self.tokens_processed += output["n_prompt_tokens"]
+        #     print(f"Embedding {output['n_prompt_tokens']} characters.")        
+        # print(f"Total tokens (characters) processed: {self.tokens_processed}")
+
+        # Use SentenceTransformer for embedding
+        # Known issue: can't read one-page PDF files due to the retriever from hnswlib
+        self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L12-v2')
         for doc in self.docs:
-            output = embedder.embed([doc['text']], long_text_mode="mean", return_dict=True)
-            self.docs_embs.extend(output["embeddings"])
-            self.tokens_processed += output["n_prompt_tokens"]
-            print(f"Embedding {output['n_prompt_tokens']} characters.")        
-        print(f"Total tokens (characters) processed: {self.tokens_processed}")
+            doc_emb = self.embedder.encode(doc['text'])
+            # doc_emb_list = doc_emb.tolist()  # Convert array to list
+            self.docs_embs.append(doc_emb)
 
     def index(self) -> None:
         """
@@ -115,6 +124,7 @@ class Vectorstore:
         query_emb = co.embed(
             texts=[query], model="embed-english-v3.0", input_type="search_query"
         ).embeddings
+        # query_emb = self.embedder.encode(query)
 
         doc_ids = self.idx.knn_query(query_emb, k=self.retrieve_top_k)[0][0]
         print(doc_ids)
