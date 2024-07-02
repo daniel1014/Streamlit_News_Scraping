@@ -44,6 +44,7 @@ def search_google(search_params, date_restrict=None, gl=None):
             st.stop()
         try:
             search_results = google_search(query, date_restrict=date_restrict, gl=gl, num=num_search)
+            print(num_search)
         except:
             st.toast("Error: Failed to retrieve search results from Google.", icon='⚠️')
             st.stop()
@@ -185,7 +186,7 @@ if st.session_state['tab_id'] is not None:
             result_index = i + con
             if result_index < end_index:
                 tile = row[con].container(height=280)
-                tile.subheader(f"**{' '.join(st.session_state['all_results'][result_index]['supplier'].split()[:2])} {st.session_state['all_results'][result_index]['focus']} - News {result_index+1}**", divider='rainbow')
+                tile.subheader(f"**News {result_index+1}**| {st.session_state['all_results'][result_index]['title']}", divider='rainbow')
                 con_ = tile.container()
                 row_ = con_.columns([2, 0.3])
                 if row_[0].button("✨Generate Summary", key=f"summary_button_{result_index}", help="Click to generate summary"):
@@ -202,8 +203,8 @@ if st.session_state['tab_id'] is not None:
                 row_[1].subheader(perform_sentiment_analysis(st.session_state['all_results'][result_index]['scrapped_text'] 
                                                              if st.session_state['all_results'][result_index].get('scrapped_text') not in ["", "Failed to scrape the article content..."] 
                                                              else st.session_state['all_results'][result_index].get('title')))
-                tile.write(f"Title: {st.session_state['all_results'][result_index]['title']}")
-                tile.write(f"Date: {st.session_state['all_results'][result_index]['date']}")
+                date = st.session_state['all_results'][result_index]['date'] if st.session_state['all_results'][result_index]['date'] != "" else "N/A"
+                tile.write(f"Date: {date}")
                 tile.write(f"Snippet: {st.session_state['all_results'][result_index]['snippet']}")
                 tile.write(f"URL: {st.session_state['all_results'][result_index]['URL']}")
                 

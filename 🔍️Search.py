@@ -135,11 +135,20 @@ for i in st.session_state['searches']:
         continue
 
     # Pass the search function to the searchbox
+    # with row[1].container():
+    #     supplier_searchbox= st_searchbox(
+    #     search,
+    #     placeholder="Type your supplier",
+    #     default=None,
+    #     key=f"search_supplier_{i}",
+    # )
     with row[1].container():
-        supplier_searchbox= st_searchbox(
-        search,
-        placeholder="Type your supplier",
-        default=None,
+        supplier_selectbox = st.selectbox(
+        "Choose your supplier",
+        label_visibility="collapsed",
+        options=supplier_list,
+        index=None,
+        placeholder="Select a supplier",
         key=f"search_supplier_{i}",
     )
 
@@ -147,7 +156,7 @@ for i in st.session_state['searches']:
         focus = st.selectbox(
             'Which focus would you like to search about?',
             label_visibility="collapsed",
-            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Financial Stability', 'Contract Management', 'Asset Management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Subsidiaries', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Health & Safety', 'Other (Please specify)'),
+            options=('Water Infrastructure', 'Infrastructure Maintenance', 'Financial Stability', 'Contract Management', 'Professional Consulting', 'Asset Management', 'Supply Chain', 'Logistics Management', 'Risk Management', 'Mergers & Acquisitions', 'Subsidiaries', 'Market Analysis', 'Quality Control', 'Regulatory Compliance', 'Sustainability Practices', 'Customer Service', 'Technology Integration', 'Health & Safety', 'Other (Please specify)'),
             index=None,
             placeholder='Select a focus',
             key=f"search_focus_{i}"
@@ -165,7 +174,8 @@ for i in st.session_state['searches']:
 # Save the search parameters
 st.session_state['search_params'] = []
 for i in st.session_state['searches']:
-    supplier = st.session_state[f"search_supplier_{i}"]["result"] or ""
+    # supplier = st.session_state[f"search_supplier_{i}"]['result'] or ""
+    supplier = st.session_state[f"search_supplier_{i}"] or ""
     if st.session_state[f"search_focus_{i}"] == 'Other (Please specify)':
         focus = st.session_state[f"search_focus_other_{i}"] or ""
     else:

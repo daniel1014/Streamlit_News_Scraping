@@ -140,3 +140,34 @@ def hide_markdown_anchor_button():
 
 def add_footer():
     st.sidebar.markdown(f"*:gray[logged in as {st.session_state.username}]*" if st.session_state.get("username") else "*Not logged in*")
+
+def insert_citations(text: str, citations: list[dict]):
+    """
+    A helper function to pretty print citations.
+    """
+    offset = 0
+    # Process citations in the order they were provided
+    for citation in citations:
+        # Adjust start/end with offset
+        start, end = citation.start + offset, citation.end + offset
+        if len(citation.document_ids) == 1:
+            cited_docs = [citation.document_ids[0][11:]]
+        elif len(citation.document_ids) == 2:
+            cited_docs = [citation.document_ids[0][11:], citation.document_ids[1][11:]]
+        elif len(citation.document_ids) == 3:
+            cited_docs = [citation.document_ids[0][11:], citation.document_ids[1][11:], citation.document_ids[2][11:]]
+        else:
+            cited_docs = [citation.document_ids[0][11:], citation.document_ids[1][11:], citation.document_ids[2][11:], citation.document_ids[3][11:]]
+        # Shorten citations if they're too long for convenience
+        if len(cited_docs) > 3:
+            placeholder = "[" + ", ".join(cited_docs[:3]) + "...]"
+        else:
+            placeholder = "[" + ", ".join(cited_docs) + "]"
+        # ^ doc[4:] removes the 'doc_' prefix, and leaves the quoted document
+        modification = f'**{text[start:end]} {placeholder}'
+        # Replace the cited text with its bolded version + placeholder
+        text = text[:start] + modification + text[end:]
+        # Update the offset for subsequent replacements
+        offset += len(modification) - (end - start)
+
+    return text

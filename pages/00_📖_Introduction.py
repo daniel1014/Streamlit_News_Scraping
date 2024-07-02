@@ -99,7 +99,7 @@ with st.expander("FAQ 6: Is there any usage limit of this app?"):
 # 6/ Technical Overview
 st.subheader("Technical Overview")
 with st.expander('Click to view the Llama 2 Chatbot architecture diagram'):
-    st.image('assets/Llama2-diagram.jpg', width=700, caption='A high-level overview of the Llama2 chatbot app')
+    st.image('assets/Cohere-rag-chatbot.png', width=700, caption='A high-level overview of our RAG-Powered Chatbot')
 with st.expander("Explore more about the latest LLM technologies that are being leveraged by our chatbot"):
     st.markdown("*Discover how Llama 2 beat OpenAI's ChatGPT [here](https://textcortex.com/post/llama-2-vs-chatgpt)*")
     st.markdown("*Learn more about how Mistral 7B outperformed OpenAI's ChatGPT [here](https://mistral.ai/news/announcing-mistral-7b/)*")
