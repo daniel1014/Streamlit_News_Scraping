@@ -4,10 +4,14 @@ import uuid
 import hnswlib
 from typing import List, Dict
 from sentence_transformers import SentenceTransformer
+import streamlit as st
 # from gpt4all import Embed4All
 
 config = dotenv_values(".env")
-cohere_api = config['COHERE_API_KEY']
+if 'COHERE_API_KEY' in config:
+    cohere_api = config['COHERE_API_KEY']
+elif 'COHERE_API_KEY' in st.secrets:
+    cohere_api = st.secrets['COHERE_API_KEY']
 co = cohere.Client(cohere_api)
 
 class Vectorstore:
@@ -99,7 +103,7 @@ class Vectorstore:
         """
         # print("Indexing documents...")
 
-        # Determine the dimensionality of the embeddings, which is 384 for the GPT4All model
+        # Determine the dimensionality of the embeddings, which is 384 for the all-MiniLM-L12-v2 model
         dim = len(self.docs_embs[0])        
 
         self.idx = hnswlib.Index(space="ip", dim=dim)       # dynamic dimensionality
