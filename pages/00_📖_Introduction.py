@@ -10,7 +10,7 @@ st.set_page_config(
     page_icon="assets/page_icon.png",
     layout="wide"
 )
-general_utils.add_logo("assets/logo.png")
+st.logo("assets/logo.png")
 
 # 2.1 / Headers
 st.markdown("<h1 style='text-align: center; color: black;'>Stay Informed with AI-powered News Scraping</h1>", unsafe_allow_html=True)

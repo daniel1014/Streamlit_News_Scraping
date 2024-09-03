@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # Setup branding logo and customized background
-general_utils.add_logo("assets/logo.png")
+st.logo("assets/logo.png", icon_image=None)
 general_utils.set_page_background_local("assets/background.png")
 
 for x in range(4):

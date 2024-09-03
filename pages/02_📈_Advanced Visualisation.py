@@ -19,7 +19,7 @@ st.set_page_config(
     layout='wide', 
 )
 
-general_utils.add_logo("assets/logo.png")
+st.logo("assets/logo.png")
 
 tab1, tab2 = st.tabs(["📈 Sentiment Analysis", "💭 Topic Modelling"])
 

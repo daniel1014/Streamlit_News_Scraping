@@ -19,7 +19,7 @@ st.set_page_config(
 
 config = dotenv_values(".env")
 
-general_utils.add_logo("assets/logo.png")
+st.logo("assets/logo.png")
 
 # if "all_results" not in st.session_state:
 #     st.session_state.all_results = None
@@ -103,7 +103,7 @@ with st.sidebar:
     Use bullet points along with reference dates where appropriate.
 
     ## Style Guide
-    Use British spelling of words, and be professional.
+    Use British spelling of words, and be professional. Use '###' for headers.
         ''',
         help="This is a system message which guides how the model should behave throughout to generate a response. It can be considered as instructions for the model which outline the goals and behaviors for the conversation (recommend to follow the specific structure and format for optimal performance).")
         rerank_top_k = st.slider('No. of docs to be retrieved', min_value=1, max_value=10, value=5, step=1, help="The number of document chunks to be retrieved for each response.")
@@ -193,7 +193,7 @@ if prompt:
                     # Use document chunks to respond
                     response = co.chat_stream(
                         message = prompt,
-                        model="command-r",
+                        model="command-r-plus",
                         documents=documents,
                         conversation_id=st.session_state.conversation_id,
                         preamble = preamble_template

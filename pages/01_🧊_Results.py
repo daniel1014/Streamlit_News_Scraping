@@ -15,7 +15,7 @@ st.set_page_config(
     page_icon="assets/page_icon.png",
     layout="wide",
 )
-general_utils.add_logo("assets/logo.png")
+st.logo("assets/logo.png")
 
 # 2 / News Search 
 # 2.1 / Google Search Setup
